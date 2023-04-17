@@ -2,6 +2,7 @@
 #define MATRIX_H
 
 #include <vector>
+
 typedef unsigned int Dimension;
 /// Class for matrix manipulations
 class Matrix {
@@ -26,26 +27,38 @@ public:
 
     void operator/=(double other);
 
-    bool operator==(const Matrix & other) const;
+    bool operator==(const Matrix& other) const;
 
     Matrix adjoint() const;
     Matrix adjugate() const;
     double cofactor(Dimension row, Dimension column) const;
     Dimension columns() const;
-    double determinant() const;
+    Matrix cubic() const;
+    double getDeterminant() const;
+    bool contains(double value, double epsilon = 1e-10) const;
     static Matrix diagonal(std::initializer_list<double> list);
     Matrix eigenvalues() const;
-    Matrix eigenvectorFor(double lambda) const;
+    Matrix eigenvectorFor(double lambda, double epsilon = 1e-10) const;
     bool equalSize(const Matrix& other) const;
+    Matrix getColumn(Dimension column) const;
+    Dimension getRank() const;
+    Matrix getRow(Dimension row) const;
+    double getTrace() const;
     static Matrix identity(Dimension size);
     Matrix inverse() const;
     bool isInvertible() const;
     bool isSquare() const;
     double me(Dimension row, Dimension column) const;
     //const double me(Dimension row, Dimension column) const;
+    Matrix normalize() const;
     Dimension rows() const;
     Matrix squared() const;
-    double trace() const;
+    void setAt(const Matrix& input, Dimension row, Dimension column);
+    void setAll(double value);
+    void setColumn(Dimension column, double value);
+    void setColumn(Dimension column, const Matrix& input);
+    void setRow(Dimension row, const Matrix& input);
+    void toRowEchelonForm();
     Matrix transpose() const;
 
     friend Matrix operator+(Matrix left, const Matrix& right);
@@ -57,10 +70,11 @@ public:
 
 private:
     std::vector<double> _data;
+    static const double _epsilon;
     Dimension _rows;
     Dimension _columns;
     Dimension _arraySize;
-    Dimension _count;
+    /*Dimension _count;
     void setValues() {}
     template<typename T, typename... Ts>
     void setValues(T value, Ts... values) {
@@ -69,8 +83,9 @@ private:
             _count++;
             setValues(values...);
         }
-    }
+    } */
 
-};// class Matrix
+    void swapRows(Dimension row1, Dimension row2);
+};
 
 #endif // MATRIX_H
