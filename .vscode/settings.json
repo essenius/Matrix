@@ -76,6 +76,8 @@
         "concepts": "cpp",
         "algorithm": "cpp",
         "version": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "__availability": "cpp",
+        "functional": "cpp"
     }
 }

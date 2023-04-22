@@ -1,187 +1,10 @@
 #include <gtest/gtest.h>
+#include "BasicMatrixTest.h"
+
+#include <gtest/gtest.h>
 #include "Matrix.h"
 
-class MatrixTest : public ::testing::Test {
-protected:
-    void expectEqual(const Matrix& expected, const Matrix& actual, const std::string& message = "") {
-
-        EXPECT_EQ(expected.rows(), actual.rows());
-        EXPECT_EQ(expected.columns(), actual.columns());
-        for (Dimension i = 0; i < expected.rows(); ++i) {
-            for (Dimension j = 0; j < expected.columns(); ++j) {
-                constexpr double EPSILON = 0.000000000000001;
-                EXPECT_NEAR(expected(i, j), actual(i, j), EPSILON) << message <<  "(" << i << ", " << j << ")";
-            }
-        }
-    }
-
-    void expectNormalizedEqual(const Matrix& expected, const Matrix& actual, const std::string& message = "")  {
-        expectEqual(expected.normalize(), actual.normalize(), message);
-    }
-};
-
-// *** Basic matrix operations ***
-
-TEST_F(MatrixTest, initMatrix) {
-    Matrix m(2, 2);
-    m(0, 0) = 1;
-    EXPECT_EQ(1, m(0, 0));
-    m(0, 1) = 2;
-    EXPECT_EQ(2, m(0, 1));
-    m(1, 0) = 3;
-}
-
-TEST_F(MatrixTest, copyAddMatrix) {
-    Matrix m({ {1, 2}, {3,4} });
-    EXPECT_TRUE(m.isSquare());
-    Matrix n = m;
-    EXPECT_EQ(1, n(0, 0));
-    EXPECT_EQ(2, n(0, 1));
-    EXPECT_EQ(3, n(1, 0));
-    EXPECT_EQ(4, n(1, 1));
-
-    n += m;
-    EXPECT_TRUE(n == Matrix({ {2, 4}, {6, 8} }));
-    EXPECT_FALSE(n == m);
-
-    n -= m;
-    EXPECT_TRUE(n == m);
-}
-
-TEST_F(MatrixTest, addMatrix) {
-    Matrix m({ {1, 2}, {3,4} });
-    Matrix n({ {1, 2}, {3,4} });
-    Matrix o = m + n;
-    EXPECT_TRUE(o == Matrix({ {2, 4}, {6, 8} }));
-}
-
-TEST_F(MatrixTest, subMatrix) {
-    Matrix m({ {1, 2}, {3,4} });
-    Matrix n({ {1, 2}, {3,4} });
-    Matrix o = m - n;
-    EXPECT_TRUE(o == Matrix({ {0, 0}, {0, 0} }));
-}
-
-TEST_F(MatrixTest, addScalar) {
-    Matrix m({ {1, 2}, {3,4} });
-    m += 1;
-    EXPECT_TRUE(m == Matrix({ {2, 3}, {4, 5} }));
-}
-
-TEST_F(MatrixTest, subScalar) {
-    Matrix m({ {1, 2}, {3,4} });
-    m -= 1;
-    EXPECT_TRUE(m == Matrix({ {0, 1}, {2, 3} }));
-}
-
-TEST_F(MatrixTest, multiply2dMatrix) {
-    Matrix m({ {1, 2}, {3, 4} });
-    Matrix n({ {1, 2}, {3, 4} });
-    Matrix o = m * n;
-    expectEqual(Matrix({ {7, 10}, {15, 22} }), o);
-}
-
-TEST_F(MatrixTest, multiplyDifferentSizeMatrix) {
-    Matrix m({ {1, 2, 3}, {3, -1, 0} });
-    Matrix n({ {1, 2}, {3, 4}, {5, 6} });
-    Matrix o = m * n;
-    expectEqual(Matrix({ {22, 28}, {0, 2} }), o, "m * n");
-    Matrix p = n * m;
-    expectEqual(Matrix({ {7, 0, 3}, {15, 2, 9}, {23, 4, 15} }), p, "n * m");
-}
-
-TEST_F(MatrixTest, divideScalar) {
-    Matrix m({ {1, 2}, {3,4} });
-    m /= 2;
-    expectEqual(Matrix({ {0.5, 1}, {1.5, 2} }), m);
-}
-
-TEST_F(MatrixTest, determinant) {
-    Matrix m({ {1, 2}, {3, 4} });
-    EXPECT_EQ(-2, m.getDeterminant());
-    Matrix n({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
-    EXPECT_EQ(0, n.getDeterminant());
-    Matrix o({ {1, 3, 5, 9}, {1, 3, 1, 7}, {4, 3, 9, 7}, {5, 2, 0, 9} });
-    EXPECT_EQ(-376, o.getDeterminant());
-}
-
-TEST_F(MatrixTest, cofactor2d) {
-    Matrix m({ {1, 2}, {3, 4} });
-    EXPECT_EQ(4, m.cofactor(0, 0));
-    EXPECT_EQ(-3, m.cofactor(0, 1));
-    EXPECT_EQ(-2, m.cofactor(1, 0));
-    EXPECT_EQ(1, m.cofactor(1, 1));
-}
-
-TEST_F(MatrixTest, cofactor3d) {
-    Matrix n({ {1, 2, 1}, {6, -1, 0}, {-1, -2, -1} });
-    EXPECT_EQ(1, n.cofactor(0, 0));
-    EXPECT_EQ(6, n.cofactor(0, 1));
-    EXPECT_EQ(-13, n.cofactor(0, 2));
-    EXPECT_EQ(0, n.cofactor(1, 0));
-    EXPECT_EQ(0, n.cofactor(1, 1));
-    EXPECT_EQ(0, n.cofactor(1, 2));
-    EXPECT_EQ(1, n.cofactor(2, 0));
-    EXPECT_EQ(6, n.cofactor(2, 1));
-    EXPECT_EQ(-13, n.cofactor(2, 2));
-}
-
-TEST_F(MatrixTest, adjugate2d) {
-    Matrix m({ {1, 2}, {3, 4} });
-    Matrix expected({ {4, -2}, {-3, 1} });
-    Matrix actual = m.adjugate();
-    expectEqual(expected, actual);
-}
-
-TEST_F(MatrixTest, adjugate3d) {
-    Matrix m({ {1, 2, 3}, {0, 1, 4}, {5, 6, 0} });
-    Matrix expected({ {-24, 18, 5}, {20, -15, -4}, {-5, 4, 1} });
-    Matrix actual = m.adjugate();
-    expectEqual(expected, actual);
-}
-
-TEST_F(MatrixTest, inverse2d) {
-    Matrix m({ {1, 2}, {3, 4} });
-    Matrix actual = m.inverse();
-    expectEqual(Matrix({ {-2, 1}, {1.5, -0.5} }), actual, "inverse");
-    expectEqual(m, actual.inverse(), "inverse of inverse");
-}
-
-TEST_F(MatrixTest, inverse3d) {
-    Matrix m({ {1, 2, 3}, {0, 1, 4}, {5, 6, 0} });
-    const Matrix expected({ {-24, 18, 5}, {20, -15, -4}, {-5, 4, 1} });
-    const Matrix actual = m.inverse();
-    expectEqual(expected, actual, "inverse");
-    expectEqual(m, actual.inverse(), "inverse of inverse");
-}
-
-TEST_F(MatrixTest, setRow) {
-    Matrix m({ {1, 2}, {3, 4} });
-
-    m.setRow(1, Matrix({{ 5, 6 }}));
-    const Matrix expected = { {1, 2}, {5, 6} };
-    expectEqual(expected, m);
-}
-
-TEST_F(MatrixTest, getRow) {
-    Matrix m({ {1,2},{3,4} });
-    const auto row = m.getRow(0);
-    expectEqual(Matrix({ {1, 2} }), row);
-}
-
-TEST_F(MatrixTest, setColumn) {
-    Matrix m({ {1, 2}, {3, 4} });
-
-    m.setColumn(1, Matrix({ { 5 }, { 7 }}));
-    const Matrix expected = { {1, 5}, {3, 7} };
-    expectEqual(expected, m);
-}
-
-TEST_F(MatrixTest, getColumn) {
-    Matrix m({ {1,2},{3,4} });
-    const auto column = m.getColumn(1);
-    expectEqual(Matrix({{2}, {4}}), column);
-}
+class MatrixTest : public BasicMatrixTest {};
 
 // *** Row echelon format ***
 
@@ -258,68 +81,71 @@ TEST_F(MatrixTest, nullSpaceForTwoFreeVariable) {
 
 // *** Eigenvalues, eigen vectors ***
 
-TEST_F(MatrixTest, eigenvalues2d) {
+TEST_F(MatrixTest, getEigenvalues2d) {
     Matrix m({ {6, -1}, {2, 3} });
     const Matrix expected({ {5}, {4} });
-    const auto actual = m.eigenvalues();
+    const auto actual = m.getEigenvalues();
     expectEqual(expected, actual);
 }
 
-TEST_F(MatrixTest, eigenvalues3dDup) {
+TEST_F(MatrixTest, getEigenvalues3dDup) {
     Matrix m({ {2, 0, 0}, {1, 2, 1}, {-1, 0, 1} });
     const Matrix expected({ {1}, {2}, {2} });
-    const auto actual = m.eigenvalues();
+    const auto actual = m.getEigenvalues();
     EXPECT_EQ(2, actual.rows());
     EXPECT_EQ(1, actual.columns());
-    EXPECT_TRUE(actual.contains(2));
-    EXPECT_TRUE(actual.contains(1));
+    EXPECT_TRUE(contains(actual, 2));
+    EXPECT_TRUE(contains(actual, 1));
 }
 
-TEST_F(MatrixTest, eigenvalues3dComplex) {
+TEST_F(MatrixTest, getEigenvalues3dComplex) {
     Matrix m({ {33, -23, 9}, {22, 33, -23}, {19, 14, 50} });
     m /= 29;
     const Matrix expected({ {2} });
-    const auto actual = m.eigenvalues();
+    const auto actual = m.getEigenvalues();
     expectEqual(expected, actual);
 }
 
-TEST_F(MatrixTest, eigenvectors3dReal) {
+TEST_F(MatrixTest, getEigenvectorsFor3dReal) {
     Matrix m({ {-2, -4, 2}, {-2, 1, 2}, {4, 2, 5} });
-    const auto actual = m.eigenvalues();
+    const auto actual = m.getEigenvalues();
     EXPECT_EQ(3, actual.rows());
     EXPECT_EQ(1, actual.columns());
-    EXPECT_TRUE(actual.contains(3.0));
-    EXPECT_TRUE(actual.contains(-5.0));
-    EXPECT_TRUE(actual.contains(6.0));
+    EXPECT_TRUE(contains(actual, 3.0));
+    EXPECT_TRUE(contains(actual, -5.0));
+    EXPECT_TRUE(contains(actual, 6.0));
 
-    const auto actualVector1 = m.eigenvectorFor(3.0);
+    const auto actualVector1 = m.getEigenvectorFor(3.0);
     expectNormalizedEqual(Matrix({ { -2 }, { 3 }, { 1 } }), actualVector1, "eigenvector 1");
-    const auto actualVector2 = m.eigenvectorFor(-5.0);
+    const auto actualVector2 = m.getEigenvectorFor(-5.0);
     expectNormalizedEqual(Matrix({ { -2 }, { -1 }, { 1 } }), actualVector2, "eigenvector 2");
-    const auto actualVector3 = m.eigenvectorFor(6.0);
+    const auto actualVector3 = m.getEigenvectorFor(6.0);
     expectNormalizedEqual(Matrix({ { 1 }, { 6 }, { 16 } }), actualVector3, "eigenvector 3");
 }
 
-TEST_F(MatrixTest, eigenvectorsTwoFreeVariables) {
+TEST_F(MatrixTest, eigenvectorsForTwoFreeVariables) {
     Matrix m({ {1, 0, 0}, {0, 0, 0}, {0, 0, 1} });
-    const auto actual = m.eigenvalues();
+    const auto actual = m.getEigenvalues();
     EXPECT_EQ(2, actual.rows());
     EXPECT_EQ(1, actual.columns());
-    EXPECT_TRUE(actual.contains(1.0));
-    EXPECT_TRUE(actual.contains(0.0));
+    EXPECT_TRUE(contains(actual, 1.0));
+    EXPECT_TRUE(contains(actual, 0.0));
 
-    const auto actualVectors1 = m.eigenvectorFor(1.0);
+    const auto actualVectors1 = m.getEigenvectorFor(1.0);
     EXPECT_EQ(2, actualVectors1.columns());
     const auto expected1 = Matrix({ { 1 }, { 0 }, { 0 } });
     const auto expected2 = Matrix({ { 0 }, { 0 }, { 1 } });
     expectNormalizedEqual(expected1, actualVectors1.getColumn(0), "actualVector1-1");
     expectNormalizedEqual(expected2, actualVectors1.getColumn(1), "actualVector1-2"); 
 
-    const auto actualVector2 = m.eigenvectorFor(0.0);
+    const auto actualVector2 = m.getEigenvectorFor(0.0);
     expectNormalizedEqual(Matrix({ { 0 }, { 1 }, { 0 } }), actualVector2, "actualVector2");
 }
 
-int main(int argc, char* argv[]) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+TEST_F(MatrixTest, getEigenVectorsTwoFreeVariables) {
+    Matrix m({ {1, 0, 0}, {0, 0, 0}, {0, 0, 1} });
+    const auto actual = m.getEigenvectors();
+    EXPECT_EQ(3, actual.rows());
+    EXPECT_EQ(3, actual.columns());
+
 }
