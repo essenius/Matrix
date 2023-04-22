@@ -6,15 +6,6 @@
 
 const double Matrix::_epsilon = 1e-12; //std::numeric_limits<double>::epsilon();
 
-void Matrix::swapRows(Dimension row1, Dimension row2) {
-    if (row1 == row2) return;
-    for (Dimension column = 0; column < _columns; ++column) {
-        double temp = me(row1, column);
-        (*this)(row1, column) = me(row2, column);
-        (*this)(row2, column) = temp;
-    }
-}
-
 Matrix::Matrix(const Dimension rows, const Dimension columns) : _data(rows* columns) {
     _rows = rows;
     _columns = columns;
@@ -237,10 +228,10 @@ Matrix Matrix::eigenvalues() const {
     const double trace = getTrace();
     const double traceSquared = squared().getTrace();
     const double determinant = getDeterminant();
-    // const double a3 = 1;
     const double a2 = -trace;
     const double a1 = (trace * trace - traceSquared) / 2.0;
-    const double a0 = (-trace * trace * trace - 2 * cubic().getTrace() + 3 * trace * traceSquared) / 6.0; // = -determinant
+    //const double a0 = (-trace * trace * trace - 2 * cubic().getTrace() + 3 * trace * traceSquared) / 6.0; 
+    const double a0 = -determinant;
 
     // see https://mathworld.wolfram.com/CubicFormula.html
     double q = (3 * a1 - a2 * a2) / 9.0;
@@ -274,57 +265,62 @@ Matrix Matrix::eigenvalues() const {
     return fabs(root1 - root2) < _epsilon ? Matrix({ { root1 } }) : Matrix({ {root1}, {root2} });
 }
 
+/// @brief get the null space of the matrix. This should return at least 1 vector for the eigenvalue matrix (A - lambda * I).
+/// @note The matrix is already expected to be in row echelon form, so we can just look at the free variables.
+/// @return the vectors in the null space
+Matrix Matrix::getNullSpace() const {
+    const auto freeVariables = getFreeVariables();
+    Matrix result(_rows, freeVariables.size());
+    auto resultColumn = 0;
+    for (auto freeVariable : freeVariables) {
+        result.setColumn(resultColumn, getColumn(freeVariable) * -1);
+        result(freeVariable, resultColumn) = 1;
+        for(auto otherFreeVariable: freeVariables) {
+            if (otherFreeVariable != freeVariable) {
+                result(otherFreeVariable, resultColumn) = 0;
+            }
+        }
+        resultColumn++;
+        // perhaps normalize result[] here
+    }
+    return result;
+}
+
 Matrix Matrix::eigenvectorFor(const double lambda, const double epsilon) const {
     if (!isSquare()) {
         throw std::invalid_argument("Matrix is not square");
     }
 
-    Matrix aMinusLabdaI = *this - identity(_rows) * lambda;
-    /* if (abs(aMinusLabdaI.getDeterminant()) < _epsilon) {
-        std::cout << "Non invertible matrix";
-    } */
     Matrix beta =  *this - identity(_rows) * lambda;
-
-    // perform Gaussian elimination
 
     beta.toRowEchelonForm();
 
-    /*for (Dimension pivotRow = 0; pivotRow < _rows; pivotRow++) {
-        Dimension maxRow = pivotRow;
-        for (Dimension subRow = pivotRow + 1; subRow < _rows; subRow++) {
-            if (abs(beta(subRow, pivotRow)) > abs(beta(maxRow, pivotRow))) {
-                maxRow = subRow;
-            }
-        }
+    return beta.getNullSpace();
+}
 
-        if (abs(beta(maxRow, pivotRow)) < epsilon) {
-            continue;
+/// @brief Finds the free variables in the matrix by searching for non-pivot columns.
+/// This must already be a matrix in row echelon form
+/// @return a vector of the free variable columns
+std::vector<Dimension> Matrix::getFreeVariables() const {
+    std::vector<Dimension> result;
+    Dimension row = 0;
+    Dimension column = 0;
+    Dimension resultsFound = 0;
+    while (resultsFound < _rows) {
+        if (abs(me(row, column)) <= _epsilon) {
+            result.push_back(column);
+            resultsFound++;
+        } else {
+            row++;
+            resultsFound++;
         }
-
-        beta.swapRows(pivotRow, maxRow);
-            
-        // normalize row
-        const double pivot = beta(pivotRow, pivotRow);
-        // <= is on purpose - we have an extra column in beta
-        for (Dimension column = pivotRow; column <= _columns; column++) {
-            beta(pivotRow, column) /= pivot;
+        column++;
+        if (column >= _columns) {
+            column = 0;
+            row++;
         }
-
-        // Set columns to 0 for the pivot by subtracting pivot row (with factor)
-        for (Dimension row = 0; row < _rows; row++) {
-            if (row == pivotRow) {
-                continue;
-            }
-            const double factor = beta(row, pivotRow);
-            for (Dimension column = pivotRow; column <= _columns; column++) {
-                beta(row, column) -= factor * beta(pivotRow, column);
-            }
-        }
-    } */
-
-    auto result = beta.getColumn(_columns-1) * -1;
-    result(_rows - 1, 0) = 1;
-    return result; //.normalize()
+    }
+    return result;
 }
 
 bool Matrix::equalSize(const Matrix& other) const {
@@ -451,10 +447,19 @@ Matrix Matrix::squared() const {
     return *this * *this;
 }
 
+void Matrix::swapRows(Dimension row1, Dimension row2) {
+    if (row1 == row2) return;
+    for (Dimension column = 0; column < _columns; ++column) {
+        double temp = me(row1, column);
+        (*this)(row1, column) = me(row2, column);
+        (*this)(row2, column) = temp;
+    }
+}
+
 void Matrix::toRowEchelonForm() {
     Dimension lead = 0;
     for (Dimension row = 0; row < _rows; row++) {
-        if (lead > _columns) {
+        if (lead >= _columns) {
             return;
         }
         Dimension pivotRow = row;
@@ -486,7 +491,7 @@ void Matrix::toRowEchelonForm() {
                     break;
                 }
             }
-         } else {
+         } else if(abs(leadingValue - 1) > _epsilon) {
             // normalize the row using leading value
             for (Dimension column = 0; column < _columns; column++) {
                 (*this)(row, column) /= leadingValue;
@@ -496,6 +501,7 @@ void Matrix::toRowEchelonForm() {
         for (Dimension subRow = 0; subRow < _rows; subRow++) {
             if (subRow != row) {
                 const double leadingValue2 = me(subRow, lead);
+                if (abs(leadingValue2) < _epsilon) continue;
                 for (Dimension column = 0; column < _columns; column++) {
                     (*this)(subRow, column) -= leadingValue2 * me(row, column);
                 }

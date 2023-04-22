@@ -27,7 +27,8 @@ public:
 
     void operator/=(double other);
 
-    bool operator==(const Matrix& other) const;
+    std::vector<Dimension> getFreeVariables() const;
+    bool operator==(const Matrix &other) const;
 
     Matrix adjoint() const;
     Matrix adjugate() const;
@@ -35,6 +36,7 @@ public:
     Dimension columns() const;
     Matrix cubic() const;
     double getDeterminant() const;
+    Matrix getNullSpace() const;
     bool contains(double value, double epsilon = 1e-10) const;
     static Matrix diagonal(std::initializer_list<double> list);
     Matrix eigenvalues() const;

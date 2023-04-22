@@ -3,20 +3,20 @@
 
 class MatrixTest : public ::testing::Test {
 protected:
-    void expectEqual(const Matrix& expected, const Matrix& actual) {
+    void expectEqual(const Matrix& expected, const Matrix& actual, const std::string& message = "") {
 
         EXPECT_EQ(expected.rows(), actual.rows());
         EXPECT_EQ(expected.columns(), actual.columns());
         for (Dimension i = 0; i < expected.rows(); ++i) {
             for (Dimension j = 0; j < expected.columns(); ++j) {
                 constexpr double EPSILON = 0.000000000000001;
-                EXPECT_NEAR(expected(i, j), actual(i, j), EPSILON);
+                EXPECT_NEAR(expected(i, j), actual(i, j), EPSILON) << message <<  "(" << i << ", " << j << ")";
             }
         }
     }
 
-    void expectNormalizedEqual(const Matrix& expected, const Matrix& actual)  {
-        expectEqual(expected.normalize(), actual.normalize());
+    void expectNormalizedEqual(const Matrix& expected, const Matrix& actual, const std::string& message = "")  {
+        expectEqual(expected.normalize(), actual.normalize(), message);
     }
 };
 
@@ -198,6 +198,26 @@ TEST_F(MatrixTest, eigenvalues3dRealTest) {
     expectNormalizedEqual(Matrix({ { 1 }, { 6 }, { 16 } }), actualVector3);
 }
 
+// wrong
+TEST_F(MatrixTest, eigenValuesTwoFreeVariablesTest) {
+    Matrix m({ {1, 0, 0}, {0, 0, 0}, {0, 0, 1} });
+    const auto actual = m.eigenvalues();
+    EXPECT_EQ(2, actual.rows());
+    EXPECT_EQ(1, actual.columns());
+    EXPECT_TRUE(actual.contains(1.0));
+    EXPECT_TRUE(actual.contains(0.0));
+
+    const auto actualVectors1 = m.eigenvectorFor(1.0);
+    EXPECT_EQ(2, actualVectors1.columns());
+    const auto expected1 = Matrix({ { 1 }, { 0 }, { 0 } });
+    const auto expected2 = Matrix({ { 0 }, { 0 }, { 1 } });
+    expectNormalizedEqual(expected1, actualVectors1.getColumn(0), "expected1");
+    expectNormalizedEqual(expected2, actualVectors1.getColumn(1), "expected2"); 
+
+    const auto actualVector2 = m.eigenvectorFor(0.0);
+    expectNormalizedEqual(Matrix({ { 0 }, { 1 }, { 0 } }), actualVector2, "actualVector2");
+}
+
 TEST_F(MatrixTest, setRowTest) {
     Matrix m({ {1, 2}, {3, 4} });
 
@@ -211,7 +231,6 @@ TEST_F(MatrixTest, getRowTest) {
     const auto row = m.getRow(0);
     expectEqual(Matrix({ {1, 2} }), row);
 }
-
 
 TEST_F(MatrixTest, setColumnTest) {
     Matrix m({ {1, 2}, {3, 4} });
@@ -241,6 +260,59 @@ TEST_F(MatrixTest, toRowEchelonFormTest2) {
     expectEqual(expected, m);
     m.toRowEchelonForm();
     expectEqual(expected, m);
+}
+
+TEST_F(MatrixTest, toRowEchelonFormTest3) {
+    Matrix m({ {0, 0, 0}, {1, 0, 1}, {0, 1, -1} });
+    m.toRowEchelonForm();
+    const Matrix expected({ {1, 0, 1}, {0, 1, -1}, {0, 0, 0} });
+    expectEqual(expected, m);
+}
+
+TEST_F(MatrixTest, toRowEchelonFormTest4) {
+    Matrix m({ {1, 0, 0}, {0, 2, 1}, {0, 0, 2} });
+    m.toRowEchelonForm();
+    const Matrix expected({ {1, 0, 0}, {0, 1, 0}, {0, 0, 1} });
+    expectEqual(expected, m);
+}
+
+TEST_F(MatrixTest, oneFreeVariableColumnsTest) {
+    Matrix m({{0,1,1}, {0,0,1}, {0,0,0}});
+    const auto actual = m.getFreeVariables();
+    EXPECT_EQ(1, actual.size());
+    EXPECT_EQ(0, actual[0]);
+}
+
+TEST_F(MatrixTest, twoFreeVariableColumnsTest) {
+    Matrix m({{0,1,0}, {0,0,0}, {0,0,0}});
+    const auto actual = m.getFreeVariables();
+    EXPECT_EQ(2, actual.size());
+    EXPECT_EQ(0, actual[0]);
+    EXPECT_EQ(2, actual[1]);
+}
+
+TEST_F(MatrixTest, noFreeVariableColumnsTest) {
+    Matrix m({{1,0,0}, {0,1,0}, {0,0,1}});
+    const auto actual = m.getFreeVariables();
+    EXPECT_EQ(0, actual.size());
+}
+
+TEST_F(MatrixTest, nullSpaceForOneFreeVariableTest) {
+    Matrix m({ {1, 0, 0}, {0, 1, 0}, {0, 0, 0} });
+    const auto actual = m.getNullSpace();
+    EXPECT_EQ(1, actual.columns());
+    expectNormalizedEqual(Matrix({ { 0 }, { 0 }, { 1 } }), actual);
+}
+
+TEST_F(MatrixTest, nullSpaceForTwoFreeVariableTest) {
+    Matrix m({ { 0, 1, 0}, {0, 0, 0}, {0, 0, 0} });
+    const auto actual = m.getNullSpace();
+    
+    EXPECT_EQ(2, actual.columns());
+    const auto expected1 = Matrix({ { 1 }, { 0 }, { 0 } });
+    const auto expected2 = Matrix({ { 0 }, { 0 }, { 1 } });
+    expectNormalizedEqual(expected1, actual.getColumn(0), "expected1");
+    expectNormalizedEqual(expected2, actual.getColumn(1), "expected2"); 
 }
 
 int main(int argc, char* argv[]) {
