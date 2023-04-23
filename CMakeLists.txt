@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(Matrix VERSION 0.0.1) #name of your project
+project(MatrixTest VERSION 0.0.1) #name of your project
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -16,14 +16,16 @@ ExternalProject_Add(
 )
 ExternalProject_Get_Property(gtest source_dir binary_dir)
 
-add_executable(runUnitTests test/ArrayTest.cpp test/MatrixTest.cpp test/SolverMatrixTest.cpp src/SolverMatrix.cpp src/Matrix.cpp src/Array.cpp)
-add_library(Matrix src/SolverMatrix.cpp src/Matrix.cpp src/Array.cpp)
+message(CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR})
+add_executable(runUnitTests test/ArrayTest.cpp test/MatrixTest.cpp test/SolverMatrixTest.cpp)
+add_subdirectory(src)
 add_dependencies(runUnitTests gtest)
+add_dependencies(runUnitTests Matrix)
 message(source_dir="${source_dir}")
 include_directories(${source_dir}/googletest/include)
+include_directories(${source_dir}/googlemock/include)
 message(binary_dir="${binary_dir}")
-target_link_libraries(runUnitTests ${binary_dir}/lib/libgtest.a)
-target_link_libraries(runUnitTests ${binary_dir}/lib/libgtest_main.a)
+target_link_libraries(runUnitTests ${CMAKE_BINARY_DIR}/libMatrix.a ${binary_dir}/lib/libgtest.a ${binary_dir}/lib/libgtest_main.a)
 
 enable_testing()
 add_test(NAME runUnitTests COMMAND runUnitTests)
