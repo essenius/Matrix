@@ -1,12 +1,25 @@
 #include <gtest/gtest.h>
 #include "ArrayTest.h"
 
+bool ArrayTest::isEqual(const Array& expected, const Array& actual) {
+    if (expected.rows() != actual.rows()) return false;
+    if (expected.columns() != actual.columns()) return false;
+
+    for (Dimension row = 0; row < expected.rows(); row++) {
+        for (Dimension column = 0; column < expected.columns(); column++) {
+            auto difference = expected(row, column) - actual(row, column);
+            if (abs(difference) > EPSILON) return false;
+        }
+    }
+    return true;
+}
+
+// repeat of above, but now asserting equality and showing details
 void ArrayTest::expectEqual(const Array& expected, const Array& actual, const std::string& message) {
     EXPECT_EQ(expected.rows(), actual.rows());
     EXPECT_EQ(expected.columns(), actual.columns());
     for (Dimension row = 0; row < expected.rows(); row++) {
         for (Dimension column = 0; column < expected.columns(); column++) {
-            constexpr double EPSILON = 0.000000000000001;
             EXPECT_NEAR(expected(row, column), actual(row, column), EPSILON) << message <<  "(" << row << ", " << column << ")";
         }
     }
@@ -128,3 +141,8 @@ TEST_F(ArrayTest, setColumnCount) {
     const Array expected = { {1, 2}, {5, 6} };
     expectEqual(expected, m);
 }*/
+
+int main(int argc, char* argv[]) {
+     ::testing::InitGoogleTest(&argc, argv);
+     return RUN_ALL_TESTS();
+}

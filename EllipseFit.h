@@ -15,7 +15,7 @@
 #ifndef ELLIPSEFIT_H
 #define ELLIPSEFIT_H
 
-#include "Matrix.h"
+#include "SolverMatrix.h"
 
 class EllipseFit {
 

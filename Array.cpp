@@ -2,7 +2,7 @@
 
 const double Array::_epsilon = 1e-12; //std::numeric_limits<double>::epsilon();
 
-Array::Array(const Dimension rows, const Dimension columns) : _data(rows* columns) {
+Array::Array(const Dimension rows, const Dimension columns) : _data(rows * columns) {
     _rows = rows;
     _columns = columns;
     _arraySize = rows * columns;
@@ -159,6 +159,9 @@ void Array::setColumn(const Dimension column, const double value) {
 }
 
 void Array::setColumnCount(const Dimension columns) {
+    if (columns == _columns) {
+        return;
+    }
     Array result(_rows, columns);
     const Dimension maxColumns = std::min(_columns, columns);
     for (Dimension row = 0; row < _rows; row++) {
@@ -182,6 +185,11 @@ Array operator*(Array left, const Array& right) {
 Array operator*(Array left, const double right) {
     left *= right;
     return left;
+}
+
+Array operator*(double left, Array right) {
+    right *= left;
+    return right;
 }
 
 Array operator+(Array left, const Array& right) {

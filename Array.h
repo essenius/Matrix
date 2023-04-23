@@ -47,6 +47,7 @@ public:
     friend Array operator-(Array left, const Array& right);
     friend Array operator*(Array left, const Array& right);
     friend Array operator*(Array left, double right);
+    friend Array operator*(double left, Array right);
     friend Array operator/(Array left, double right);
 
 protected:

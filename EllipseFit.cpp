@@ -49,32 +49,32 @@ std::vector<double> EllipseFit::fit() {
 	const Matrix scatter3 = _design2.transpose() * _design2;
 
 	// reduced scatter matrix (M in the article)
-	const Matrix reducedScatter = _c1Inverse * (scatter1 - scatter2 * scatter3.inverse() * scatter2.transpose());
+	const SolverMatrix reducedScatter = _c1Inverse * (scatter1 - scatter2 * scatter3.inverse() * scatter2.transpose());
 
 	const auto eigenvectors = reducedScatter.getEigenvectors();
 
 	// 4ac - b^2 must be positive for an ellipse
-	Eigen::VectorXd condition = 4 * (eigenvector.row(0).array() * eigenvector.row(2).array()) - eigenvector.row(1).array().pow(2);
+	Array condition = 4.0 * (eigenvectors.getRow(0) * eigenvectors.getRow(2)) - eigenvectors.getRow(1).pow2();
 
 	// a1 and a2 are the coefficients: a1 = (a,b,c), a2 = (d,f,g).
-	Eigen::VectorXd a1;
+	Matrix a1(3, 1);
 
 	// there should be one where the condition is positive, that's the one we need
 
-	for (int i = 0; i < 3; i++) {
-		if (condition(i) > 0) {
-			a1 = eigenvector.col(i);
+	for (int eigenVectorIndex = 0; eigenVectorIndex < condition.columns(); eigenVectorIndex++) {
+		if (condition(0, eigenVectorIndex) > 0) {
+			a1 = eigenvectors.getColumn(eigenVectorIndex);
 			break;
 		}
 		// we didn't find it (should not happen)
-		if (i == 2) {
+		if (eigenVectorIndex == 2) {
 			/* TODO: remove this print statement */
 			printf("No positive eigenvector found");
 			return {0, 0, 0, 0, 0, 0};
 		}
 	}
 
-    const Eigen::VectorXd a2 = -1 * scatter3.inverse() * scatter2.transpose() * a1;
+    const auto a2 = -1 * scatter3.inverse() * scatter2.transpose() * a1;
 
-	return {a1(0), a1(1), a1(2), a2(0), a2(1), a2(2)};
+	return {a1(0,0), a1(1,0), a1(2,0), a2(0,0), a2(1,0), a2(2,0)};
 }
