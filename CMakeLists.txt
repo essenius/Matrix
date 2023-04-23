@@ -16,8 +16,8 @@ ExternalProject_Add(
 )
 ExternalProject_Get_Property(gtest source_dir binary_dir)
 
-add_executable(runUnitTests ArrayTest.cpp MatrixTest.cpp SolverMatrixTest.cpp SolverMatrix.cpp Matrix.cpp Array.cpp)
-add_library(Matrix SolverMatrix.cpp Matrix.cpp Array.cpp)
+add_executable(runUnitTests test/ArrayTest.cpp test/MatrixTest.cpp test/SolverMatrixTest.cpp src/SolverMatrix.cpp src/Matrix.cpp src/Array.cpp)
+add_library(Matrix src/SolverMatrix.cpp src/Matrix.cpp src/Array.cpp)
 add_dependencies(runUnitTests gtest)
 message(source_dir="${source_dir}")
 include_directories(${source_dir}/googletest/include)

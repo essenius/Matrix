@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "Matrix.h"
+#include "../src/Matrix.h"
 #include "ArrayTest.h"
 
 class MatrixTest : public ArrayTest {

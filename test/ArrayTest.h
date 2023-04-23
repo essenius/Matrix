@@ -2,7 +2,7 @@
 #define ARRAYTEST_H
 
 #include "gtest/gtest.h"
-#include "Array.h"
+#include "../src/Array.h"
 
 class ArrayTest : public ::testing::Test {
 protected:

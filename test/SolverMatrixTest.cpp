@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "MatrixTest.h"
-#include "SolverMatrix.h"
+#include "../src/SolverMatrix.h"
 
 class SolverMatrixTest : public MatrixTest {
 protected:
