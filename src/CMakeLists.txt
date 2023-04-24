@@ -1,9 +1,12 @@
-cmake_minimum_required(VERSION 3.14)
+#cmake_minimum_required(VERSION 3.14)
 
-project(Matrix VERSION 0.0.1)
+#project(Matrix VERSION 0.0.1)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-add_library(Matrix SolverMatrix.cpp Matrix.cpp Array.cpp)
+message(STATUS "CMAKE_PROJECT_NAME: ${CMAKE_PROJECT_NAME}")
+message(STATUS "PROJECT_NAME: ${PROJECT_NAME}")
+message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+message(STATUS "CMAKE_INSTALL_PREFIX")
+file(GLOB_RECURSE myHeaders LIST_DIRECTORIES true *.h)
+file(GLOB_RECURSE mySources LIST_DIRECTORIES true *.cpp)
+target_sources (${CMAKE_PROJECT_NAME} PUBLIC ${myHeaders} PRIVATE ${mySources})
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
