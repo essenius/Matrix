@@ -43,6 +43,9 @@ public:
     void setColumn(const Dimension column, const double value);
     void setColumnCount(const Dimension columns);
 
+    void swapRows(Dimension row1, Dimension row2);
+    void swapColumns(Dimension column1, Dimension column2);
+
     friend Array operator+(Array left, const Array& right);
     friend Array operator-(Array left, const Array& right);
     friend Array operator*(Array left, const Array& right);

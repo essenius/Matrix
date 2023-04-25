@@ -17,10 +17,14 @@ public:
     Matrix getEigenvectors() const;
     std::vector<Dimension> getFreeVariables() const;
     Matrix getNullSpace() const;
-    void toRowEchelonForm();
+    // void toRowEchelonForm();
+
+    // converts itself to RREF and returns the permutation matrix. 
+    Matrix toReducedRowEchelonFormWithPivot();
 
 protected:
-    void swapRows(Dimension row1, Dimension row2);
+    void eliminatePivotValueInRow(Dimension pivot, Dimension row, double epsilon);
+    void multiplyRow(Dimension row, double factor);
 };
 
 #endif // MATRIX_H

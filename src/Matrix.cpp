@@ -165,6 +165,7 @@ Matrix Matrix::normalize() const {
         norm += entry * entry;
     }
     norm = sqrt(norm);
+    if (_data[0] < 0) norm = -norm;
     if (abs(norm) > _epsilon) return Matrix(*this / norm);
     return *this;
 }

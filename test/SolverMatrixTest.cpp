@@ -17,34 +17,55 @@ protected:
 
 // *** Row echelon format ***
 
+TEST_F(SolverMatrixTest, toRowEchelonForm10x) {
+    SolverMatrix m({ {10, 20, 30, 0}, {30, 40, 50, 0}, {40, 50, 60, 0} });
+    const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
+    const Array expected({ {1, 0, 0.5, 0}, {0, 1, 0.5, 0}, {0, 0, 0, 0} });
+    expectEqual(expected, m);
+    expectEqual({{0,1,0,0}, {0,0,1,0}, {1,0,0,0}, {0,0,0,1}}, permutation);
+}
+
+
 TEST_F(SolverMatrixTest, toRowEchelonForm1) {
     SolverMatrix m({ {1, 2, 3, 0}, {3, 4, 5, 0}, {4, 5, 6, 0} });
-    m.toRowEchelonForm();
-    const Array expected({ {1, 0, -1, 0}, {0, 1, 2, 0}, {0, 0, 0, 0} });
+    const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
+    const Array expected({ {1, 0, 0.5, 0}, {0, 1, 0.5, 0}, {0, 0, 0, 0} });
+    expectEqual(expected, m);
+    expectEqual({{0,1,0,0}, {0,0,1,0}, {1,0,0,0}, {0,0,0,1}}, permutation);
+    m.toReducedRowEchelonFormWithPivot();
     expectEqual(expected, m);
 }
 
 TEST_F(SolverMatrixTest, toRowEchelonForm2) {
     SolverMatrix m({ {-5, -4, 2, 0}, {-2, -2, 2, 0}, {4, 2, 2, 0} });
-    m.toRowEchelonForm();
-    const Array expected({ {1, 0, 2, 0}, {0, 1, -3, 0}, {0, 0, 0, 0} });
+    const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
+    const Array expected({ {1, 0, 2.0/3.0, 0}, {0, 1, -1.0/3.0, 0}, {0, 0, 0, 0} });
     expectEqual(expected, m);
-    m.toRowEchelonForm();
-    expectEqual(expected, m);
+    expectEqual({{1,0,0,0}, {0,0,1,0}, {0,1,0,0}, {0,0,0,1}}, permutation);
 }
 
 TEST_F(SolverMatrixTest, toRowEchelonForm3) {
     SolverMatrix m({ {0, 0, 0}, {1, 0, 1}, {0, 1, -1} });
-    m.toRowEchelonForm();
+    const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
     const Array expected({ {1, 0, 1}, {0, 1, -1}, {0, 0, 0} });
     expectEqual(expected, m);
+    expectEqual({{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}, permutation);
 }
 
 TEST_F(SolverMatrixTest, toRowEchelonForm4) {
     SolverMatrix m({ {1, 0, 0}, {0, 2, 1}, {0, 0, 2} });
-    m.toRowEchelonForm();
+    const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
     const Array expected({ {1, 0, 0}, {0, 1, 0}, {0, 0, 1} });
     expectEqual(expected, m);
+    expectEqual({ {0, 0, 1}, {1, 0, 0}, {0, 1, 0} }, permutation);
+}
+
+TEST_F(SolverMatrixTest, toRowEchelonFormSpecial) {
+    SolverMatrix m({ {8192.10277, -0.0341611, 8192.03422}, {0.0686703, -6.3222615e-7, 0.0686707}, {8192.03422, -0.03416085, 8192.10277} });
+    const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
+    const Array expected({ {1, 0, -3.9e-6}, {0, 1, -2.62e-7}, {0, 9.74e-7, -3.46e-7} });
+    expectEqual(expected, m, "toRowEchelonFormSpecial", 1e-7);
+    expectEqual({ {1, 0, 0}, {0, 0, 1}, {0, 1, 0} }, permutation);
 }
 
 // *** Null spaces and free variables ***
@@ -87,6 +108,17 @@ TEST_F(SolverMatrixTest, nullSpaceForTwoFreeVariable) {
     expectNormalizedEqual(expected1, actual.getColumn(0), "expected1");
     expectNormalizedEqual(expected2, actual.getColumn(1), "expected2"); 
 }
+
+/*TEST_F(SolverMatrixTest, nullSpaceSpecial) {
+    SolverMatrix m({{1, -3.9e-6, 0}, {0, -2.62e-7, 1}, {0, -3.46e-7, 9.74e-7}});
+    const auto actual = m.getNullSpace();
+    
+    EXPECT_EQ(2, actual.columns());
+    const auto expected1 = Matrix({ { 1 }, { 0 }, { 0 } });
+    const auto expected2 = Matrix({ { 0 }, { 0 }, { 1 } });
+    expectNormalizedEqual(expected1, actual.getColumn(0), "expected1");
+    expectNormalizedEqual(expected2, actual.getColumn(1), "expected2"); 
+} */
 
 // *** Eigenvalues, eigen vectors ***
 

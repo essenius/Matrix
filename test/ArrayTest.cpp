@@ -1,26 +1,26 @@
 #include <gtest/gtest.h>
 #include "ArrayTest.h"
 
-bool ArrayTest::isEqual(const Array& expected, const Array& actual) {
+bool ArrayTest::isEqual(const Array& expected, const Array& actual, const double epsilon) {
     if (expected.rows() != actual.rows()) return false;
     if (expected.columns() != actual.columns()) return false;
 
     for (Dimension row = 0; row < expected.rows(); row++) {
         for (Dimension column = 0; column < expected.columns(); column++) {
             auto difference = expected(row, column) - actual(row, column);
-            if (abs(difference) > EPSILON) return false;
+            if (abs(difference) > epsilon) return false;
         }
     }
     return true;
 }
 
 // repeat of above, but now asserting equality and showing details
-void ArrayTest::expectEqual(const Array& expected, const Array& actual, const std::string& message) {
-    EXPECT_EQ(expected.rows(), actual.rows());
-    EXPECT_EQ(expected.columns(), actual.columns());
+void ArrayTest::expectEqual(const Array& expected, const Array& actual, const std::string& message, const double epsilon) {
+    EXPECT_EQ(expected.rows(), actual.rows()) << message << " rows";
+    EXPECT_EQ(expected.columns(), actual.columns()) << message << " columns";
     for (Dimension row = 0; row < expected.rows(); row++) {
         for (Dimension column = 0; column < expected.columns(); column++) {
-            EXPECT_NEAR(expected(row, column), actual(row, column), EPSILON) << message <<  "(" << row << ", " << column << ")";
+            EXPECT_NEAR(expected(row, column), actual(row, column), epsilon) << message <<  "(" << row << ", " << column << ")";
         }
     }
 }

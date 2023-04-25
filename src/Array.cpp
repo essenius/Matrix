@@ -172,6 +172,24 @@ void Array::setColumnCount(const Dimension columns) {
     *this = result;
 }
 
+void Array::swapRows(Dimension row1, Dimension row2) {
+    if (row1 == row2) return;
+    for (Dimension column = 0; column < _columns; column++) {
+        double temp = me(row1, column);
+        (*this)(row1, column) = me(row2, column);
+        (*this)(row2, column) = temp;
+    }
+}
+
+void Array::swapColumns(Dimension column1, Dimension column2) {
+    if (column1 == column2) return;
+    for (Dimension row = 0; row < _rows; row++) {
+        double temp = me(row, column1);
+        (*this)(row, column1) = me(row, column2);
+        (*this)(row, column2) = temp;
+    }
+}
+
 Array operator/(Array left, const double right) {
     left /= right;
     return left;
