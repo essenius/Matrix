@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include "MatrixTest.h"
 
-void MatrixTest::expectNormalizedEqual(const Matrix& expected, const Matrix& actual, const std::string& message) {
-        expectEqual(expected.normalize(), actual.normalize(), message);
+void MatrixTest::expectNormalizedEqual(const Matrix& expected, const Matrix& actual, const std::string& message, const double epsilon) {
+        expectEqual(expected.normalize(), actual.normalize(), message, epsilon);
 };
 
 TEST_F(MatrixTest, multiply2dMatrix) {

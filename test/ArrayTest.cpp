@@ -134,11 +134,4 @@ TEST_F(ArrayTest, setColumnCount) {
     n.setColumnCount(2);
     expectEqual(m, n, "setColumnCount smaller");
 }
-/*TEST_F(ArrayTest, setRow) {
-    Array m({ {1, 2}, {3, 4} });
-
-    m.setRow(1, Array({{ 5, 6 }}));
-    const Array expected = { {1, 2}, {5, 6} };
-    expectEqual(expected, m);
-}*/
 

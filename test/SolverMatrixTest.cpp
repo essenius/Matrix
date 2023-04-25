@@ -9,7 +9,7 @@ protected:
         for (Dimension column = 0; column < actual.columns(); column++) {
             // actual should already be normalized
             Array vector = actual.getColumn(column);
-            if (isEqual(expectedNormalized, vector)) return true;
+            if (isEqual(expectedNormalized, vector, SolverMatrix::getEigenEpsilon())) return true;
         }
         return false;
     }
@@ -109,16 +109,16 @@ TEST_F(SolverMatrixTest, nullSpaceForTwoFreeVariable) {
     expectNormalizedEqual(expected2, actual.getColumn(1), "expected2"); 
 }
 
-/*TEST_F(SolverMatrixTest, nullSpaceSpecial) {
+TEST_F(SolverMatrixTest, nullSpaceSpecial) {
     SolverMatrix m({{1, -3.9e-6, 0}, {0, -2.62e-7, 1}, {0, -3.46e-7, 9.74e-7}});
     const auto actual = m.getNullSpace();
     
-    EXPECT_EQ(2, actual.columns());
-    const auto expected1 = Matrix({ { 1 }, { 0 }, { 0 } });
-    const auto expected2 = Matrix({ { 0 }, { 0 }, { 1 } });
-    expectNormalizedEqual(expected1, actual.getColumn(0), "expected1");
-    expectNormalizedEqual(expected2, actual.getColumn(1), "expected2"); 
-} */
+    EXPECT_EQ(1, actual.columns());
+    auto outcome = m * actual;
+    const auto expected = Matrix({ { 3.9e-6 }, { 1 }, { 3.46e-7 } });
+    expectNormalizedEqual(expected, actual, "null space", SolverMatrix::getEigenEpsilon());
+    expectEqual({{0},{0},{0}}, outcome, "matrix * null space", SolverMatrix::getEigenEpsilon());
+} 
 
 // *** Eigenvalues, eigen vectors ***
 

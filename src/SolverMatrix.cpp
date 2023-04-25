@@ -4,11 +4,17 @@
 #include <cmath>
 #include <iostream>
 
+double SolverMatrix::_eigenEpsilon = 1e-6;
+
 SolverMatrix::SolverMatrix(Dimension rows, Dimension columns): Matrix(rows, columns) {}
 
 SolverMatrix::SolverMatrix(std::initializer_list<std::initializer_list<double>> list) : Matrix(list) {}
 
 SolverMatrix::SolverMatrix(const Matrix &other) : Matrix(other) {}
+
+double SolverMatrix::getEigenEpsilon() {
+    return _eigenEpsilon;
+}
 
 Matrix SolverMatrix::getEigenvalues() const {
     if (!isSquare()) {
@@ -82,6 +88,10 @@ Matrix SolverMatrix::getEigenvalues() const {
 /// @return the vectors in the null space
 Matrix SolverMatrix::getNullSpace() const {
     const auto freeVariables = getFreeVariables();
+    if (freeVariables.empty()) {
+        // no free variables, so no null space
+        return Matrix(0, 0);
+    }
     Matrix result(_rows, freeVariables.size());
     auto resultColumn = 0;
     for (auto freeVariable : freeVariables) {
@@ -93,9 +103,12 @@ Matrix SolverMatrix::getNullSpace() const {
             }
         }
         resultColumn++;
-        // perhaps normalize result[] here
     }
     return result;
+}
+
+void SolverMatrix::setEigenEpsilon(double epsilon) {
+    _eigenEpsilon = epsilon;
 }
 
 Matrix SolverMatrix::getEigenvectorFor(const double lambda) const {
@@ -136,7 +149,7 @@ std::vector<Dimension> SolverMatrix::getFreeVariables() const {
     Dimension column = 0;
     Dimension resultsFound = 0;
     while (resultsFound < _rows) {
-        if (abs(me(row, column)) <= _epsilon) {
+        if (abs(me(row, column)) <= _eigenEpsilon) {
             result.push_back(column);
             resultsFound++;
         } else {
@@ -152,50 +165,16 @@ std::vector<Dimension> SolverMatrix::getFreeVariables() const {
     return result;
 }
 
-/*
-Dimension SolverMatrix::getRank() const {
-    Matrix result = *this;
-    result.toRowEchelonForm();
-    Dimension rank = 0;
-    for (Dimension row = 0; row < _rows; row++) {
-        for (Dimension column = 0; column < _columns; column++) {
-            if (abs(result(row, column)) > _epsilon) {
-                rank++;
-                break;
-            }
-        }
-    }
-    return rank;
-} */
-
-void SolverMatrix::eliminatePivotValueInRow(Dimension pivot, Dimension row, double epsilon) {
+void SolverMatrix::eliminatePivotValueInRow(Dimension pivot, Dimension row) {
     if (row == pivot) return;
-    if (me(pivot, pivot) < epsilon) return;
+    if (me(pivot, pivot) < _eigenEpsilon) return;
     const double valueToEliminate = me(row, pivot);               
-    if (abs(valueToEliminate) < epsilon) return;
+    if (abs(valueToEliminate) < _eigenEpsilon) return;
     const double compensationFactor = -valueToEliminate / me(pivot, pivot);
     for (Dimension column = 0; column < _columns; column++) {
         (*this)(row, column) += compensationFactor * me(pivot, column);
     }
 }
-
-/*void SolverMatrix::swapRows(Dimension row1, Dimension row2) {
-    if (row1 == row2) return;
-    for (Dimension column = 0; column < _columns; column++) {
-        double temp = me(row1, column);
-        (*this)(row1, column) = me(row2, column);
-        (*this)(row2, column) = temp;
-    }
-}
-
-void SolverMatrix::swapColumns(Dimension column1, Dimension column2) {
-    if (column1 == column2) return;
-    for (Dimension row = 0; row < _rows; row++) {
-        double temp = me(row, column1);
-        (*this)(row, column1) = me(row, column2);
-        (*this)(row, column2) = temp;
-    }
-} */
 
 void SolverMatrix::multiplyRow(Dimension row, double factor) {
     for (Dimension column = 0; column < _columns; column++) {
@@ -203,65 +182,7 @@ void SolverMatrix::multiplyRow(Dimension row, double factor) {
     }
 }
 
-/* void SolverMatrix::toRowEchelonForm() {
-    // we use a different value - otherwise we get problems with rounding errors
-    constexpr double EPSILON = 1e-6;
-    Dimension lead = 0;
-    for (Dimension row = 0; row < _rows; row++) {
-        if (lead >= _columns) {
-            return;
-        }
-        Dimension pivotRow = row;
-        while (abs(me(pivotRow, lead)) < EPSILON) {
-            pivotRow++;
-            if (pivotRow == _rows) {
-                pivotRow = row;
-                lead++;
-                if (lead == _rows) {
-                    return;
-                }
-            }
-        }
-
-        swapRows(pivotRow, row);
-
-        const double leadingValue = me(row, lead);
-        if (abs(leadingValue) < EPSILON) {
-            // we have a zero row, so we need to swap it with a non-zero row
-            for (Dimension nextRow = row + 1; nextRow < _rows; row++) {
-                if (abs(me(nextRow, lead)) > EPSILON) {
-                    swapRows(row, nextRow);
-                    break;
-                }
-                // none found, move to next column
-                if (nextRow == _rows - 1) {
-                    lead++;
-                    row--;
-                    break;
-                }
-            }
-         } else if(abs(leadingValue - 1) > EPSILON) {
-            // normalize the row using leading value
-            for (Dimension column = 0; column < _columns; column++) {
-                (*this)(row, column) /= leadingValue;
-            }
-         }
-        // subtract the row from all other rows to get zeros in the column
-        for (Dimension subRow = 0; subRow < _rows; subRow++) {
-            if (subRow != row) {
-                const double leadingValue2 = me(subRow, lead);
-                if (abs(leadingValue2) < EPSILON) continue;
-                for (Dimension column = 0; column < _columns; column++) {
-                    (*this)(subRow, column) -= leadingValue2 * me(row, column);
-                }
-            }
-        }
-        lead++;
-    }
-} */
-
 Matrix SolverMatrix::toReducedRowEchelonFormWithPivot() {
-    constexpr double EPSILON = 1e-6;
     auto permutation = Matrix::identity(_columns);
     const auto maxPivot = std::min(_rows, _columns);
     
@@ -281,38 +202,37 @@ Matrix SolverMatrix::toReducedRowEchelonFormWithPivot() {
         }
 
         // swap rows and/or columns to bring pivot to (row, row)
-
+        // if we do a column swap, we also need to swap the permutation matrix
         swapRows(pivot, maxRow);
-        // permutation.swapRows(pivot, maxRow);
         swapColumns(pivot, maxColumn);
         permutation.swapColumns(pivot, maxColumn);
 
         // make pivot element equal to 1
 
         auto pivotValue = me(pivot, pivot);
-        if (abs(pivotValue) > EPSILON) {
+        if (abs(pivotValue) > _eigenEpsilon) {
             multiplyRow(pivot, 1.0 / pivotValue);
         }
 
         // eliminate all other elements below the pivot
 
         for (Dimension subRow = pivot + 1; subRow < _rows; subRow++) {
-            eliminatePivotValueInRow(pivot, subRow, EPSILON);                
+            eliminatePivotValueInRow(pivot, subRow);                
         }    
     }
 
     // back-subsitution    
 
-    // using int instead of Dimensino as Dimension is never negative
+    // using int instead of Dimension as Dimension is never negative
 
     for (int pivot = maxPivot - 1; pivot >= 0; pivot--) {
-        if (abs(me(pivot, pivot)) > EPSILON) {
+        if (abs(me(pivot, pivot)) > _eigenEpsilon) {
             multiplyRow(pivot, 1.0 / me(pivot, pivot));
         }
 
         // eliminate all entries above pivot
         for (int subRow = pivot - 1; subRow >= 0; subRow--) {
-            eliminatePivotValueInRow(pivot, subRow, EPSILON);
+            eliminatePivotValueInRow(pivot, subRow);
         }
     }
     return permutation;

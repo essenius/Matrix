@@ -28,10 +28,10 @@ public:
 
     bool operator==(const Array &other) const;
 
-    void assertMatchingSize(const Array& other) const;
     Dimension columns() const;
     bool equalSize(const Array& other) const;
     Array getColumn(const Dimension column) const;
+    static double getEpsilon();
     Array getRow(const Dimension row) const;
     bool isSquare() const;
     double me(Dimension row, Dimension column) const;

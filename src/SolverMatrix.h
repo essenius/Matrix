@@ -12,19 +12,21 @@ public:
     SolverMatrix(Dimension rows, Dimension columns);
     SolverMatrix(std::initializer_list<std::initializer_list<double>> list);
     SolverMatrix(const Matrix& other);
+    static double getEigenEpsilon();
     Matrix getEigenvalues() const;
     Matrix getEigenvectorFor(double lambda) const;
     Matrix getEigenvectors() const;
     std::vector<Dimension> getFreeVariables() const;
     Matrix getNullSpace() const;
-    // void toRowEchelonForm();
+    static void setEigenEpsilon(double epsilon);
 
     // converts itself to RREF and returns the permutation matrix. 
     Matrix toReducedRowEchelonFormWithPivot();
 
 protected:
-    void eliminatePivotValueInRow(Dimension pivot, Dimension row, double epsilon);
+    void eliminatePivotValueInRow(Dimension pivot, Dimension row);
     void multiplyRow(Dimension row, double factor);
+    static double _eigenEpsilon;
 };
 
 #endif // MATRIX_H

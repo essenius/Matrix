@@ -32,29 +32,31 @@ Array::Array(const Array& other) {
 }
 
 double& Array::operator()(Dimension row, Dimension column) {
+    assert(row < _rows && column < _columns);
     return _data[row * _columns + column];
 }
 
 const double& Array::operator()(Dimension row, Dimension column) const {
+    assert(row < _rows && column < _columns);
     return _data[row * _columns + column];
 }
 
 void Array::operator+=(const Array& other) {
-    assertMatchingSize(other);
+    assert(other.equalSize(*this));
     for (Dimension cell = 0; cell < _arraySize; cell++) {
         _data[cell] += other._data[cell];
     }
 }
 
 void Array::operator-=(const Array& other) {
-    assertMatchingSize(other);
+    assert(other.equalSize(*this));
     for (Dimension cell = 0; cell < _arraySize; cell++) {
         _data[cell] -= other._data[cell];
     }
 }
 
 void Array::operator*=(const Array& other) {
-    assertMatchingSize(other);
+    assert(other.equalSize(*this));
     for (Dimension cell = 0; cell < _arraySize; cell++) {
         _data[cell] *= other._data[cell];
     }
@@ -96,12 +98,6 @@ bool Array::operator==(const Array& other) const {
     return true;
 }
 
-void Array::assertMatchingSize(const Array &other) const {
-    if (!equalSize(other)) {
-        throw std::invalid_argument("Matrix dimensions do not match");
-    }
-}
-
 Dimension Array::columns() const {
     return _columns;
 }
@@ -111,6 +107,7 @@ bool Array::equalSize(const Array& other) const {
 }
 
 Array Array::getColumn(const Dimension column) const {
+    assert(column < _columns);
     Array result(_rows, 1);
     for (Dimension row = 0; row < _rows; row++) {
         result(row, 0) = me(row, column);
@@ -118,7 +115,12 @@ Array Array::getColumn(const Dimension column) const {
     return result;
 }
 
+double Array::getEpsilon() {
+    return _epsilon;
+}
+
 Array Array::getRow(const Dimension row) const {
+    assert(row < _rows);
     Array result(1, _columns);
     for (Dimension column = 0; column < _columns; column++) {
         result(0, column) = me(row, column);
@@ -131,6 +133,7 @@ bool Array::isSquare() const {
 }
 
 double Array::me(const Dimension row, const Dimension column) const {
+    assert(row < _rows && column < _columns);
     return _data[row * _columns + column];
 }
 
@@ -147,12 +150,14 @@ Dimension Array::rows() const {
 }
 
 void Array::setColumn(Dimension column, const Array& input) {
+    assert(column < _columns && input.rows() == _rows);
     for (Dimension row = 0; row < _rows; row++) {
         (*this)(row, column) = input(row, 0);
     }
 }
 
 void Array::setColumn(const Dimension column, const double value) {
+    assert(column < _columns);
     for (Dimension row = 0; row < _rows; row++) {
         (*this)(row, column) = value;
     }
@@ -173,6 +178,7 @@ void Array::setColumnCount(const Dimension columns) {
 }
 
 void Array::swapRows(Dimension row1, Dimension row2) {
+    assert(row1 < _rows && row2 < _rows);
     if (row1 == row2) return;
     for (Dimension column = 0; column < _columns; column++) {
         double temp = me(row1, column);
@@ -182,6 +188,7 @@ void Array::swapRows(Dimension row1, Dimension row2) {
 }
 
 void Array::swapColumns(Dimension column1, Dimension column2) {
+    assert(column1 < _columns && column2 < _columns);
     if (column1 == column2) return;
     for (Dimension row = 0; row < _rows; row++) {
         double temp = me(row, column1);

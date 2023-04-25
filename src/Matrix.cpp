@@ -10,11 +10,8 @@ Matrix::Matrix(const Array& other) : Array(other){}
 
 Matrix::Matrix(const std::initializer_list<std::initializer_list<double>> list) : Array(list) {}
 
-
 void Matrix::operator*=(const Matrix& other) {
-    if (_columns != other._rows) {
-        throw std::invalid_argument("Matrix dimensions do not match");
-    }
+    assert(_columns == other._rows);
     Matrix result(_rows, other._columns);
     for (Dimension row = 0; row < _rows; row++) {
         for (Dimension otherColumn = 0; otherColumn < other._columns; otherColumn++) {
@@ -48,6 +45,7 @@ Matrix Matrix::adjugate() const {
 
 
 double Matrix::cofactor(Dimension row, Dimension column) const {
+    assert(row < _rows && isSquare());
     Matrix minor(_rows - 1, _columns - 1);
     for (Dimension subRow = 0; subRow < _rows; subRow++) {
         for (Dimension subColumn = 0; subColumn < _columns; subColumn++) {
@@ -75,9 +73,7 @@ Matrix Matrix::cubic() const {
 }
 
 double Matrix::getDeterminant() const {
-    if (!isSquare()) {
-        throw std::invalid_argument("Matrix is not square");
-    }
+    assert(isSquare());
     if (_rows == 1) {
         return _data[0];
     }
@@ -113,26 +109,8 @@ Matrix Matrix::diagonal(const std::initializer_list<double> list) {
     return result;
 }
 
-/*Matrix Matrix::getColumn(const Dimension column) const {
-    Matrix result(_rows, 1);
-    for (Dimension row = 0; row < _rows; row++) {
-        result(row, 0) = me(row, column);
-    }
-    return result;
-}
-
-Matrix Matrix::getRow(const Dimension row) const {
-    Matrix result(1, _columns);
-    for (Dimension column = 0; column < _columns; column++) {
-        result(0, column) = me(row, column);
-    }
-    return result;
-}*/
-
 double Matrix::getTrace() const {
-    if (!isSquare()) {
-        throw std::invalid_argument("Matrix is not square");
-    }
+    assert(isSquare());
     double result = 0;
     for (Dimension row = 0; row < _rows; row++) {
         result += me(row, row);
@@ -149,9 +127,7 @@ Matrix Matrix::identity(Dimension size) {
 }
 
 Matrix Matrix::inverse() const {
-    if (!isInvertible()) {
-        throw std::invalid_argument("Matrix is not invertible");
-    }
+    assert(isInvertible());
     return adjugate() / getDeterminant();
 }
 
@@ -169,26 +145,6 @@ Matrix Matrix::normalize() const {
     if (abs(norm) > _epsilon) return Matrix(*this / norm);
     return *this;
 }
-
-/*void Matrix::setAt(const Matrix& input, const Dimension startRow, const Dimension startColumn) {
-    for (Dimension row = 0; row < input._rows; row++) {
-        for (Dimension column = 0; column < input._columns; column++) {
-            (*this)(startRow + row, startColumn + column) = input(row, column);
-        }
-    }
-}
-
-void Matrix::setAll(const double value) {
-    for (double& entry : _data) {
-        entry = value;
-    }
-}
-
-void Matrix::setRow(const Dimension row, const Matrix& input) {
-    for (Dimension column = 0; column < _columns; column++) {
-        (*this)(row, column) = input(0, column);
-    }
-}*/
 
 Matrix Matrix::squared() const {
     return *this * *this;

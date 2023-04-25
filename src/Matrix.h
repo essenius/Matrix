@@ -41,4 +41,4 @@ public:
     friend Matrix operator*(double left, Matrix right);
 };
 
-#endif // MATRIX_H
+#endif
