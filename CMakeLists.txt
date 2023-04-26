@@ -6,15 +6,15 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(Matrix "")
-add_executable(MatrixTest "")
-
 add_subdirectory(src)
 
-enable_testing()
+message(STATUS "Main CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
+message(STATUS "Main CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
 
-add_subdirectory(test)
-
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  enable_testing()
+  add_subdirectory(test)
+endif()
 #include(ExternalProject)
 #ExternalProject_Add(
 #    gtest

@@ -1,5 +1,7 @@
 set (testName ${CMAKE_PROJECT_NAME}Test)
 
+add_executable(${testName} "")
+
 include(FindGit)
 find_package(Git)
 
