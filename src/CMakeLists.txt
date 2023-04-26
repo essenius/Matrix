@@ -1,3 +1,5 @@
+message(STATUS matrix src: CMAKE_PROJECT_NAME="${CMAKE_PROJECT_NAME}")
+
 add_library(${CMAKE_PROJECT_NAME} "")
 
 message(STATUS "CMAKE_PROJECT_NAME: ${CMAKE_PROJECT_NAME}")
