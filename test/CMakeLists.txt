@@ -3,7 +3,7 @@ include(tools)
 include(FindGit)
 find_package(Git)
 
-assertVariableSet(testLibName Git_FOUND)
+assertVariableSet(matrixName matrixTestName Git_FOUND)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -20,12 +20,13 @@ FetchContent_MakeAvailable_With_Check(googletest)
 
 message(CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR})
 
-add_executable(${testLibName} "")
+add_executable(${matrixTestName} "")
 
 file(GLOB_RECURSE myHeaders LIST_DIRECTORIES true *.h)
 file(GLOB_RECURSE mySources LIST_DIRECTORIES true *.cpp)
-target_sources (${testLibName} PUBLIC ${myHeaders} PRIVATE ${mySources})
+target_sources (${matrixTestName} PUBLIC ${myHeaders} PRIVATE ${mySources})
 
-target_link_libraries(${testLibName} ${CMAKE_PROJECT_NAME} gtest_main)
+#message(STATUS "CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME} = ${matrixName}")
+target_link_libraries(${matrixTestName} ${matrixName} gtest_main)
 
-add_test(NAME ${testLibName} COMMAND ${testLibName})
+add_test(NAME ${matrixTestName} COMMAND ${matrixTestName})

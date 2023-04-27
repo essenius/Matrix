@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(libName Matrix)
-set(testLibName ${libName}Test)
+set(matrixName Matrix)
+set(matrixTestName ${matrixName}Test)
 
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(TOP_LEVEL ON)
@@ -9,7 +9,7 @@ else()
   set(TOP_LEVEL OFF)
 endif()
 
-project(${libName} VERSION 0.0.4)
+project(${matrixName} VERSION 0.0.4)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -31,5 +31,5 @@ if(TOP_LEVEL)
   message(STATUS "Top level project - enabling tests")
   enable_testing()
   add_subdirectory(test)
-  target_code_coverage(${testLibName} EXCLUDE build/_deps/googletest-src/* test/*) 
+  target_code_coverage(${matrixTestName} EXCLUDE build/_deps/googletest-src/* test/*) 
 endif()

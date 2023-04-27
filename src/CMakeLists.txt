@@ -1,8 +1,8 @@
 include(tools)
 
-assertVariableSet(libName)
+assertVariableSet(matrixName)
 
-message(STATUS "In Matrix ${libName} src: CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME}")
+message(STATUS "In Matrix ${matrixName} src: CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME}")
 
 file(WRITE ${CMAKE_BINARY_DIR}/output.txt "")
 
@@ -12,12 +12,12 @@ foreach (_variableName ${_variableNames})
     file(APPEND ${CMAKE_BINARY_DIR}/output.txt "${_variableName}=${${_variableName}}\n")
 endforeach()
 
-add_library(${libName} "")
+add_library(${matrixName} "")
 
 file(GLOB_RECURSE myHeaders LIST_DIRECTORIES true *.h)
 file(GLOB_RECURSE mySources LIST_DIRECTORIES true *.cpp)
-target_sources (${libName} PUBLIC ${myHeaders} PRIVATE ${mySources})
-target_include_directories(${libName} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_sources (${matrixName} PUBLIC ${myHeaders} PRIVATE ${mySources})
+target_include_directories(${matrixName} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-message(STATUS "Installing to ${CMAKE_BINARY_DIR}")
-install(TARGETS ${libName} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+message(STATUS "Installing to ${CMAKE_CURRENT_BINARY_DIR}")
+install(TARGETS ${matrixName} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
