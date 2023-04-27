@@ -31,12 +31,10 @@ public:
     Dimension columns() const;
     bool equalSize(const Array& other) const;
     Array getColumn(const Dimension column) const;
-    static double getEpsilon();
     Array getRow(const Dimension row) const;
     bool isSquare() const;
     double me(Dimension row, Dimension column) const;
 
-    Array pow2() const;
     Dimension rows() const;
 
     void setColumn(Dimension column, const Array & input);
@@ -53,9 +51,11 @@ public:
     friend Array operator*(double left, Array right);
     friend Array operator/(Array left, double right);
 
+    static constexpr double EPSILON = 1e-12; //std::numeric_limits<double>::epsilon();
+
 protected:
     std::vector<double> _data;
-    static const double _epsilon;
+
     Dimension _rows;
     Dimension _columns;
     Dimension _arraySize;

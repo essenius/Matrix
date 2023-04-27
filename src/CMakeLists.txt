@@ -1,15 +1,11 @@
-set (libName Matrix)
+include(tools)
+
+assertVariableSet(libName)
 
 message(STATUS "${libName} src: CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME}")
 
 add_library(${libName} "")
-message(STATUS "${libName} src: CMAKE_PROJECT_NAME: ${CMAKE_PROJECT_NAME}")
-message(STATUS "${libName} src: PROJECT_NAME: ${PROJECT_NAME}")
-message(STATUS "${libName} src: CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
-message(STATUS "${libName} src: MAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
-message(STATUS "${libName} src: CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
-message(STATUS "${libName} src: CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
-message(STATUS "${libName} src: CMAKE_INSTALL_PREFIX")
+
 file(GLOB_RECURSE myHeaders LIST_DIRECTORIES true *.h)
 file(GLOB_RECURSE mySources LIST_DIRECTORIES true *.cpp)
 target_sources (${libName} PUBLIC ${myHeaders} PRIVATE ${mySources})

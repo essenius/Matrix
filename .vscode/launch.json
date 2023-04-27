@@ -3,12 +3,11 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "program": "${workspaceFolder}/build/MatrixTest",
     "configurations": [
         {
-            "name": "Debug Unit Tests",
+            "name": "Debug",
             "type": "lldb",
-            "program": "${workspaceFolder}/build/MatrixTest",
+            "program": "${workspaceFolder}/build/test/MatrixTest",
             "args": [],
             "request": "launch"
         }

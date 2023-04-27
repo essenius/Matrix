@@ -5,6 +5,22 @@ void MatrixTest::expectNormalizedEqual(const Matrix& expected, const Matrix& act
         expectEqual(expected.normalize(), actual.normalize(), message, epsilon);
 };
 
+TEST_F(MatrixTest, add) {
+    Matrix m({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
+    Matrix n({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
+    Matrix expected({ {2, 4, 6}, {8, 10, 12}, {14, 16, 18} });
+    Matrix actual = m + n;
+    expectEqual(expected, actual, "add");
+}
+
+TEST_F(MatrixTest, multiplyScalar) {
+    Matrix m({ {1, 2}, {3, 4} });
+    m *= 2;
+    expectEqual(Matrix({ {2, 4}, {6, 8} }), m);
+    Matrix n = 2 * m;
+    expectEqual(Matrix({ {4, 8}, {12, 16} }), n);
+}
+
 TEST_F(MatrixTest, multiply2dMatrix) {
     Matrix m({ {1, 2}, {3, 4} });
     Matrix n({ {1, 2}, {3, 4} });
@@ -80,6 +96,17 @@ TEST_F(MatrixTest, inverse3d) {
     expectEqual(m, actual.inverse(), "inverse of inverse");
 }
 
+TEST_F(MatrixTest, normalize) {
+    Matrix m({ {3, 4} });
+    Matrix expected({ {0.6, 0.8} });
+    Matrix actual = m.normalize();
+    expectEqual(expected, actual, "normalize all positive");
+    expectEqual(Matrix({{0}}), Matrix({{0}}).normalize(), "normalize zero");
+    const Matrix m2({{-1, 4, -2, 2}});
+    const Matrix expected2({{0.2, -0.8, 0.4, -0.4}});
+    expectEqual(expected2, m2.normalize(), "normalize first negative");
+}   
+
 TEST_F(MatrixTest, transpose) {
     Matrix m({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
     const Matrix expected({ {1, 4, 7}, {2, 5, 8}, {3, 6, 9} });
@@ -95,3 +122,5 @@ TEST_F(MatrixTest, toArray) {
     auto actual = m.toArray();
     expectEqual(expected, actual, "toArray");
 }
+
+

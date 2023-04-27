@@ -43,7 +43,6 @@ Matrix Matrix::adjugate() const {
     return adjoint().transpose();
 }
 
-
 double Matrix::cofactor(Dimension row, Dimension column) const {
     assert(row < _rows && isSquare());
     Matrix minor(_rows - 1, _columns - 1);
@@ -64,12 +63,6 @@ double Matrix::cofactor(Dimension row, Dimension column) const {
         }
     }
     return minor.getDeterminant() * pow(-1, row + column);
-}
-
-Matrix Matrix::cubic() const {
-    auto result = squared();
-    result *= *this;
-    return result;
 }
 
 double Matrix::getDeterminant() const {
@@ -98,17 +91,6 @@ double Matrix::getDeterminant() const {
     return result;
 }
 
-Matrix Matrix::diagonal(const std::initializer_list<double> list) {
-    const auto size = static_cast<Dimension>(list.size());
-    Matrix result(size, size);
-    Dimension diagonalCell = 0;
-    for (const auto value : list) {
-        result(diagonalCell, diagonalCell) = value;
-        diagonalCell++;
-    }
-    return result;
-}
-
 double Matrix::getTrace() const {
     assert(isSquare());
     double result = 0;
@@ -132,7 +114,7 @@ Matrix Matrix::inverse() const {
 }
 
 bool Matrix::isInvertible() const {
-    return isSquare() && abs(getDeterminant()) > _epsilon;
+    return isSquare() && abs(getDeterminant()) > EPSILON;
 }
 
 Matrix Matrix::normalize() const {
@@ -141,9 +123,9 @@ Matrix Matrix::normalize() const {
         norm += entry * entry;
     }
     norm = sqrt(norm);
+    if (norm < EPSILON) return *this;
     if (_data[0] < 0) norm = -norm;
-    if (abs(norm) > _epsilon) return Matrix(*this / norm);
-    return *this;
+    return Matrix(*this / norm);
 }
 
 Matrix Matrix::squared() const {

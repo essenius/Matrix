@@ -9,7 +9,7 @@ protected:
         for (Dimension column = 0; column < actual.columns(); column++) {
             // actual should already be normalized
             Array vector = actual.getColumn(column);
-            if (isEqual(expectedNormalized, vector, SolverMatrix::getEigenEpsilon())) return true;
+            if (isEqual(expectedNormalized, vector, SolverMatrix::EIGEN_EPSILON)) return true;
         }
         return false;
     }
@@ -91,6 +91,13 @@ TEST_F(SolverMatrixTest, noFreeVariableColumns) {
     EXPECT_EQ(0, actual.size());
 }
 
+TEST_F(SolverMatrixTest, nullSpaceNoFreeVariables) {
+    SolverMatrix m({ {1, 0, 0}, {0, 1, 0}, {0, 0, 1} });
+    const auto actual = m.getNullSpace();
+    EXPECT_EQ(0, actual.columns());
+    EXPECT_EQ(3, actual.rows());
+}
+
 TEST_F(SolverMatrixTest, nullSpaceForOneFreeVariable) {
     SolverMatrix m({ {1, 0, 0}, {0, 1, 0}, {0, 0, 0} });
     const auto actual = m.getNullSpace();
@@ -116,15 +123,28 @@ TEST_F(SolverMatrixTest, nullSpaceSpecial) {
     EXPECT_EQ(1, actual.columns());
     auto outcome = m * actual;
     const auto expected = Matrix({ { 3.9e-6 }, { 1 }, { 3.46e-7 } });
-    expectNormalizedEqual(expected, actual, "null space", SolverMatrix::getEigenEpsilon());
-    expectEqual({{0},{0},{0}}, outcome, "matrix * null space", SolverMatrix::getEigenEpsilon());
+    expectNormalizedEqual(expected, actual, "null space", SolverMatrix::EIGEN_EPSILON);
+    expectEqual({{0},{0},{0}}, outcome, "matrix * null space", SolverMatrix::EIGEN_EPSILON);
 } 
 
 // *** Eigenvalues, eigen vectors ***
 
+TEST_F(SolverMatrixTest, getEigenvalues1d) {
+    SolverMatrix m({ {6} });
+    const auto actual = m.getEigenvalues();
+    expectEqual(m, actual);
+}
+
 TEST_F(SolverMatrixTest, getEigenvalues2d) {
     SolverMatrix m({ {6, -1}, {2, 3} });
     const Matrix expected({ {5}, {4} });
+    const auto actual = m.getEigenvalues();
+    expectEqual(expected, actual);
+}
+
+TEST_F(SolverMatrixTest, getEigenvalues2dNoSolution) {
+    SolverMatrix m({ {0, 1}, {-1, 0} });
+    const Matrix expected(0, 0);
     const auto actual = m.getEigenvalues();
     expectEqual(expected, actual);
 }
@@ -136,6 +156,15 @@ TEST_F(SolverMatrixTest, getEigenvalues3dDup) {
     EXPECT_EQ(1, actual.columns());
     EXPECT_TRUE(contains(actual, 2));
     EXPECT_TRUE(contains(actual, 1));
+}
+
+TEST_F(SolverMatrixTest, getEigenvalues3dOne) {
+    // trace(M) = 0, trace(M^2) = 0, determinant = 0
+    SolverMatrix m({ {0, 0, 1}, {0, 0, -1}, {1, 1, 0} });
+    const auto actual = m.getEigenvalues();
+    EXPECT_EQ(1, actual.rows());
+    EXPECT_EQ(1, actual.columns());
+    EXPECT_TRUE(contains(actual, 0));
 }
 
 TEST_F(SolverMatrixTest, getEigenvalues3dComplex) {

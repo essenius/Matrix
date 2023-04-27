@@ -1,7 +1,5 @@
 #include "Array.h"
 
-const double Array::_epsilon = 1e-12; //std::numeric_limits<double>::epsilon();
-
 Array::Array(const Dimension rows, const Dimension columns) : _data(rows * columns) {
     _rows = rows;
     _columns = columns;
@@ -91,7 +89,7 @@ bool Array::operator==(const Array& other) const {
         return false;
     }
     for (Dimension cell = 0; cell < _arraySize; cell++) {
-        if (abs(_data[cell]- other._data[cell]) > _epsilon) {
+        if (abs(_data[cell]- other._data[cell]) > EPSILON) {
             return false;
         }
     }
@@ -115,10 +113,6 @@ Array Array::getColumn(const Dimension column) const {
     return result;
 }
 
-double Array::getEpsilon() {
-    return _epsilon;
-}
-
 Array Array::getRow(const Dimension row) const {
     assert(row < _rows);
     Array result(1, _columns);
@@ -135,14 +129,6 @@ bool Array::isSquare() const {
 double Array::me(const Dimension row, const Dimension column) const {
     assert(row < _rows && column < _columns);
     return _data[row * _columns + column];
-}
-
-Array Array::pow2() const {
-    Array result(_rows, _columns);
-    for (Dimension cell = 0; cell < _arraySize; cell++) {
-        result._data[cell] = _data[cell] * _data[cell];
-    }
-    return result;
 }
 
 Dimension Array::rows() const {
@@ -177,16 +163,6 @@ void Array::setColumnCount(const Dimension columns) {
     *this = result;
 }
 
-void Array::swapRows(Dimension row1, Dimension row2) {
-    assert(row1 < _rows && row2 < _rows);
-    if (row1 == row2) return;
-    for (Dimension column = 0; column < _columns; column++) {
-        double temp = me(row1, column);
-        (*this)(row1, column) = me(row2, column);
-        (*this)(row2, column) = temp;
-    }
-}
-
 void Array::swapColumns(Dimension column1, Dimension column2) {
     assert(column1 < _columns && column2 < _columns);
     if (column1 == column2) return;
@@ -197,8 +173,23 @@ void Array::swapColumns(Dimension column1, Dimension column2) {
     }
 }
 
-Array operator/(Array left, const double right) {
-    left /= right;
+void Array::swapRows(Dimension row1, Dimension row2) {
+    assert(row1 < _rows && row2 < _rows);
+    if (row1 == row2) return;
+    for (Dimension column = 0; column < _columns; column++) {
+        double temp = me(row1, column);
+        (*this)(row1, column) = me(row2, column);
+        (*this)(row2, column) = temp;
+    }
+}
+
+Array operator+(Array left, const Array& right) {
+    left += right;
+    return left;
+}
+
+Array operator-(Array left, const Array& right) {
+    left -= right;
     return left;
 }
 
@@ -212,17 +203,12 @@ Array operator*(Array left, const double right) {
     return left;
 }
 
+Array operator/(Array left, const double right) {
+    left /= right;
+    return left;
+}
+
 Array operator*(double left, Array right) {
     right *= left;
     return right;
-}
-
-Array operator+(Array left, const Array& right) {
-    left += right;
-    return left;
-}
-
-Array operator-(Array left, const Array& right) {
-    left -= right;
-    return left;
 }

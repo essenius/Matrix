@@ -21,9 +21,7 @@ public:
     Matrix adjoint() const;
     Matrix adjugate() const;
     double cofactor(Dimension row, Dimension column) const;
-    Matrix cubic() const;
     double getDeterminant() const;
-    static Matrix diagonal(std::initializer_list<double> list);
     double getTrace() const;
     static Matrix identity(Dimension size);
     Matrix inverse() const;

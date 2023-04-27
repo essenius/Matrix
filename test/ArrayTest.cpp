@@ -41,6 +41,8 @@ TEST_F(ArrayTest, initArray) {
     m(0, 1) = 2;
     EXPECT_EQ(2, m(0, 1));
     m(1, 0) = 3;
+    EXPECT_EQ(3, m(1, 0));
+
 }
 
 TEST_F(ArrayTest, copyAddArray) {
@@ -97,6 +99,8 @@ TEST_F(ArrayTest, multiplyScalar) {
     Array m({ {1, 2}, {3,4} });
     m *= 2;
     EXPECT_TRUE(m == Array({ {2, 4}, {6, 8} }));
+    Array n = 2 * m;
+    EXPECT_TRUE(n == Array({ {4, 8}, {12, 16} }));
 }
 
 TEST_F(ArrayTest, divideScalar) {
@@ -135,3 +139,39 @@ TEST_F(ArrayTest, setColumnCount) {
     expectEqual(m, n, "setColumnCount smaller");
 }
 
+TEST_F(ArrayTest, DifferentSizesNotEqual) {
+    Array m({ {1, 2}, {3, 4} });
+    Array n({{1}});
+    EXPECT_FALSE(m == n);
+}
+
+TEST_F(ArrayTest, SetColumnScalar) {
+    Array m({ {1, 2}, {3, 4} });
+    m.setColumn(1, 5);
+    const Array expected = { {1, 5}, {3, 5} };
+    expectEqual(expected, m);
+}
+
+TEST_F(ArrayTest, GetEpsilon) {
+    Array m({{Array::EPSILON / 2}});
+    Array n({{Array::EPSILON / 3}});
+    expectEqual(m, n);
+}
+
+TEST_F(ArrayTest, SwapRowsTest) {
+    Array m({ {1, 2}, {3, 4}, {5, 6} });
+    m.swapRows(0, 2);
+    const Array expected = { {5,6}, {3, 4}, {1, 2} };
+    expectEqual(expected, m);
+    m.swapRows(1, 1);
+    expectEqual(expected, m);
+}
+
+TEST_F(ArrayTest, SwapColumnsTest) {
+    Array m({ {1, 2}, {3, 4}, {5, 6} });
+    m.swapColumns(0, 1);
+    const Array expected = { {2, 1}, {4, 3}, {6, 5} };
+    expectEqual(expected, m);
+    m.swapColumns(1, 1);
+    expectEqual(expected, m);
+}
