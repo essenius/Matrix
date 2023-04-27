@@ -34,10 +34,10 @@ public:
     Array getRow(const Dimension row) const;
     bool isSquare() const;
     double me(Dimension row, Dimension column) const;
-
+    Array pow2();
     Dimension rows() const;
 
-    void setColumn(Dimension column, const Array & input);
+    void setColumn(Dimension column, const Array &input);
     void setColumn(const Dimension column, const double value);
     void setColumnCount(const Dimension columns);
 

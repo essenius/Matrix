@@ -135,6 +135,14 @@ Dimension Array::rows() const {
     return _rows;
 }
 
+Array Array::pow2() {
+    Array result(*this);
+    for (Dimension cell = 0; cell < _arraySize; cell++) {
+        result._data[cell] *= _data[cell];
+    }
+    return result;
+}
+
 void Array::setColumn(Dimension column, const Array& input) {
     assert(column < _columns && input.rows() == _rows);
     for (Dimension row = 0; row < _rows; row++) {
@@ -212,3 +220,5 @@ Array operator*(double left, Array right) {
     right *= left;
     return right;
 }
+
+

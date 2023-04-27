@@ -121,6 +121,11 @@ TEST_F(ArrayTest, getRow) {
     expectEqual(Array({ {1, 2} }), row);
 }
 
+TEST_F(ArrayTest, pow2) {
+    Array m({ {1,2},{3,4} });
+    auto actual = m.pow2();
+    expectEqual(Array({ {1, 4}, {9, 16} }), actual);
+}
 TEST_F(ArrayTest, setColumn) {
     Array m({ {1, 2}, {3, 4} });
 

@@ -31,5 +31,9 @@
 *.out
 *.app
 
+# code coverage files
+*.profraw
+
 # build folder
 build/
+
