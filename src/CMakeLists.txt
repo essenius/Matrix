@@ -2,7 +2,15 @@ include(tools)
 
 assertVariableSet(libName)
 
-message(STATUS "${libName} src: CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME}")
+
+
+message(STATUS "In Matrix ${libName} src: CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME}")
+
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
 
 add_library(${libName} "")
 
