@@ -4,11 +4,13 @@ assertVariableSet(libName)
 
 message(STATUS "In Matrix ${libName} src: CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME}")
 
-#get_cmake_property(_variableNames VARIABLES)
-#list (SORT _variableNames)
-#foreach (_variableName ${_variableNames})
-#    message(STATUS "${_variableName}=${${_variableName}}")
-#endforeach()
+file(WRITE ${CMAKE_BINARY_DIR}/output.txt "")
+
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+    file(APPEND ${CMAKE_BINARY_DIR}/output.txt "${_variableName}=${${_variableName}}\n")
+endforeach()
 
 add_library(${libName} "")
 
@@ -18,4 +20,4 @@ target_sources (${libName} PUBLIC ${myHeaders} PRIVATE ${mySources})
 target_include_directories(${libName} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 message(STATUS "Installing to ${CMAKE_BINARY_DIR}")
-install(TARGETS ${libName} DESTINATION ${CMAKE_BINARY_DIR})
+install(TARGETS ${libName} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

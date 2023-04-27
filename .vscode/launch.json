@@ -9,7 +9,8 @@
             "type": "lldb",
             "program": "${workspaceFolder}/build/test/MatrixTest",
             "args": [],
-            "request": "launch"
+            "request": "launch",
+            "cwd": "${workspaceFolder}/build",
         }
     ]
 }
