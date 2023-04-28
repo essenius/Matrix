@@ -13,7 +13,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/output.txt "")
 get_cmake_property(_variableNames VARIABLES)
 list (SORT _variableNames)
 foreach (_variableName ${_variableNames})
-    file(APPEND ${CMAKE_BINARY_DIR}/output.txt "${_variableName}=${${_variableName}}\n")
+    file(APPEND ${PROJECT_BINARY_DIR}/output.txt "${_variableName}=${${_variableName}}\n")
 endforeach()
 
 add_library(${matrixName} "")
