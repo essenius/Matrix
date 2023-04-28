@@ -5,9 +5,6 @@ find_package(Git)
 
 assertVariableSet(matrixName matrixTestName Git_FOUND)
 
-message(STATUS "CMAKE_CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
-message(STATUS "PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}")
-message(STATUS "CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
 include(FetchContent)
 FetchContent_Declare(
     googletest
