@@ -3,13 +3,13 @@ cmake_minimum_required(VERSION 3.14)
 set(matrixName Matrix)
 set(matrixTestName ${matrixName}Test)
 
+project(${matrixName} VERSION 0.0.4 LANGUAGES CXX)
+
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(TOP_LEVEL ON)
 else()
   set(TOP_LEVEL OFF)
 endif()
-
-project(${matrixName} VERSION 0.0.4)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)

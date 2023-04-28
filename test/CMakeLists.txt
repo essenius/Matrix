@@ -5,6 +5,9 @@ find_package(Git)
 
 assertVariableSet(matrixName matrixTestName Git_FOUND)
 
+message(STATUS "${CMAKE_CURRENT_BINARY_DIR}=${${CMAKE_CURRENT_BINARY_DIR}}")
+message(STATUS "${PROJECT_BINARY_DIR}=${${PROJECT_BINARY_DIR}}")
+message(STATUS "${CMAKE_BINARY_DIR}=${${CMAKE_BINARY_DIR}}")
 include(FetchContent)
 FetchContent_Declare(
     googletest
@@ -18,15 +21,15 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable_With_Check(googletest)
 
-message(CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR})
-
 add_executable(${matrixTestName} "")
 
-file(GLOB_RECURSE myHeaders LIST_DIRECTORIES true *.h)
-file(GLOB_RECURSE mySources LIST_DIRECTORIES true *.cpp)
-target_sources (${matrixTestName} PUBLIC ${myHeaders} PRIVATE ${mySources})
+#file(GLOB_RECURSE myHeaders LIST_DIRECTORIES true *.h)
+#file(GLOB_RECURSE mySources LIST_DIRECTORIES true *.cpp)
 
-#message(STATUS "CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME} = ${matrixName}")
+set(myHeaders ArrayTest.h MatrixTest.h)
+set(mySources ArrayTest.cpp MatrixTest.cpp SolverMatrixTest.cpp)
+target_sources (${matrixTestName} PRIVATE ${myHeaders} PRIVATE ${mySources})
+
 target_link_libraries(${matrixTestName} ${matrixName} gtest_main)
 
 add_test(NAME ${matrixTestName} COMMAND ${matrixTestName})
