@@ -3,14 +3,16 @@
 
 #include <vector>
 
-typedef unsigned int Dimension;
+using Dimension = unsigned int;
 
 /// Class for array manipulations (coefficient wise)
 class Array {
 public:
     Array(Dimension rows, Dimension columns);
-    Array(const std::initializer_list<std::initializer_list<double>> list);
-    Array(const Array& other);
+    explicit Array(const std::initializer_list<std::initializer_list<double>> list);
+
+    double& operator[](Dimension cell);
+    const double& operator[](Dimension cell) const;
 
     double& operator()(Dimension row, Dimension column);
     const double& operator()(Dimension row, Dimension column) const;
@@ -28,10 +30,14 @@ public:
 
     bool operator==(const Array &other) const;
 
+    Dimension size() const;
     Dimension columns() const;
     bool equalSize(const Array& other) const;
     Array getColumn(const Dimension column) const;
+    Dimension columnCount() const;
+
     Array getRow(const Dimension row) const;
+    Dimension rowCount() const;
     bool isSquare() const;
     double me(Dimension row, Dimension column) const;
     Array pow2();
@@ -51,9 +57,10 @@ public:
     friend Array operator*(double left, Array right);
     friend Array operator/(Array left, double right);
 
-    static constexpr double EPSILON = 1e-12; //std::numeric_limits<double>::epsilon();
+    // not using std::numeric_limits<double>::epsilon() because it is too small
+    static constexpr double EPSILON = 1e-12; 
 
-protected:
+private:
     std::vector<double> _data;
 
     Dimension _rows;

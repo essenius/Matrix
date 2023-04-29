@@ -9,11 +9,11 @@ SolverMatrix::SolverMatrix(std::initializer_list<std::initializer_list<double>> 
 SolverMatrix::SolverMatrix(const Matrix &other) : Matrix(other) {}
 
 Matrix SolverMatrix::getEigenvalues() const {
-    assert(isSquare() && _rows < 4);
-    if (_rows == 1) {
+    assert(isSquare() && rowCount() < 4);
+    if (rowCount() == 1) {
         return Matrix({ {me(0, 0)} });
     }
-    if (_rows == 2) {
+    if (rowCount() == 2) {
         const double determinant = getDeterminant();
         const double trace = getTrace();
         const double discriminant = trace * trace - 4 * determinant;
@@ -34,14 +34,14 @@ Matrix SolverMatrix::getEigenvalues() const {
     const double determinant = getDeterminant();
     const double a2 = -trace;
     const double a1 = (trace * trace - traceSquared) / 2.0;
-    //const double a0 = (-trace * trace * trace - 2 * cubic().getTrace() + 3 * trace * traceSquared) / 6.0; 
+    // another way for calculating a0 is (-trace * trace * trace - 2 * cubic().getTrace() + 3 * trace * traceSquared) / 6.0
     const double a0 = -determinant;
 
     // see https://mathworld.wolfram.com/CubicFormula.html
     double q = (3 * a1 - a2 * a2) / 9.0;
     const double r = (9 * a2 * a1 - 27 * a0 - 2 * a2 * a2 * a2) / 54.0;
 
-    // x^3 + 3qx -2r = 0
+    // x^3 + 3qx - 2r = 0
 
     const double discriminant = q * q * q + r * r ;
 
@@ -80,7 +80,7 @@ Matrix SolverMatrix::getNullSpace() const {
         // We need the rows to have dimension 3 to be able to multiply with the permutation matrix
         return Matrix(3, 0);
     }
-    Matrix result(_rows, freeVariables.size());
+    Matrix result(rowCount(), static_cast<Dimension>(freeVariables.size()));
     auto resultColumn = 0;
     for (auto freeVariable : freeVariables) {
         result.setColumn(resultColumn, getColumn(freeVariable) * -1);
@@ -99,7 +99,7 @@ Matrix SolverMatrix::getNullSpace() const {
 Matrix SolverMatrix::getEigenvectorFor(const double lambda) const {
     assert(isSquare());
 
-    auto beta =  SolverMatrix(*this - identity(_rows) * lambda);
+    auto beta =  SolverMatrix(*this - identity(rowCount()) * lambda);
     auto permutation = beta.toReducedRowEchelonFormWithPivot();
     return permutation * beta.getNullSpace();
 }
@@ -108,7 +108,7 @@ Matrix SolverMatrix::getEigenvectors() const {
     assert(isSquare());
 
     const auto eigenvalues = getEigenvalues();
-    Matrix result(_rows, _rows);
+    Matrix result(rowCount(), rowCount());
     Dimension currentRow = 0;
     for (Dimension eigenValueIndex = 0; eigenValueIndex < eigenvalues.rows(); eigenValueIndex++) {
         auto eigenvectors = getEigenvectorFor(eigenvalues(eigenValueIndex, 0));
@@ -130,7 +130,7 @@ std::vector<Dimension> SolverMatrix::getFreeVariables() const {
     Dimension row = 0;
     Dimension column = 0;
     Dimension resultsFound = 0;
-    while (resultsFound < _rows) {
+    while (resultsFound < rowCount()) {
         if (abs(me(row, column)) <= EIGEN_EPSILON) {
             result.push_back(column);
             resultsFound++;
@@ -139,7 +139,7 @@ std::vector<Dimension> SolverMatrix::getFreeVariables() const {
             resultsFound++;
         }
         column++;
-        if (column >= _columns) {
+        if (column >= columnCount()) {
             column = 0;
             row++;
         }
@@ -153,35 +153,41 @@ void SolverMatrix::eliminatePivotValueInRow(Dimension pivot, Dimension row) {
     const double valueToEliminate = me(row, pivot);               
     if (abs(valueToEliminate) < EIGEN_EPSILON) return;
     const double compensationFactor = -valueToEliminate / me(pivot, pivot);
-    for (Dimension column = 0; column < _columns; column++) {
+    for (Dimension column = 0; column < columnCount(); column++) {
         (*this)(row, column) += compensationFactor * me(pivot, column);
     }
 }
 
 void SolverMatrix::multiplyRow(Dimension row, double factor) {
-    for (Dimension column = 0; column < _columns; column++) {
+    for (Dimension column = 0; column < columnCount(); column++) {
         (*this)(row, column) *= factor;
     }
 }
 
+void SolverMatrix::findMaxPivot(const Dimension& pivot, Dimension& maxRow, Dimension& maxColumn) const {
+    maxRow = pivot;
+    maxColumn = pivot;
+    double maxValue = 0;
+
+    for(Dimension searchRow = pivot; searchRow < rowCount(); searchRow++) {
+        for(Dimension searchColumn = pivot; searchColumn < columnCount(); searchColumn++) {
+            if(abs(me(searchRow, searchColumn)) > maxValue) {
+                maxRow = searchRow;
+                maxColumn = searchColumn;
+                maxValue = abs(me(searchRow, searchColumn));
+            }
+        }
+    }
+}
+
 Matrix SolverMatrix::toReducedRowEchelonFormWithPivot() {
-    auto permutation = Matrix::identity(_columns);
-    const auto maxPivot = std::min(_rows, _columns);
+    auto permutation = Matrix::identity(columnCount());
+    const auto maxPivot = std::min(rowCount(), columnCount());
     
     for (Dimension pivot = 0; pivot < maxPivot; pivot++) {
         Dimension maxRow = pivot;
         Dimension maxColumn = pivot;
-        double maxValue = abs(me(pivot, pivot));
-
-        for(Dimension searchRow = pivot; searchRow < _rows; searchRow++) {
-            for(Dimension searchColumn = pivot; searchColumn < _columns; searchColumn++) {
-                if(abs(me(searchRow, searchColumn)) > maxValue) {
-                    maxRow = searchRow;
-                    maxColumn = searchColumn;
-                    maxValue = abs(me(searchRow, searchColumn));
-                }
-            }
-        }
+        findMaxPivot(pivot, maxRow, maxColumn);
 
         // swap rows and/or columns to bring pivot to (row, row)
         // if we do a column swap, we also need to swap the permutation matrix
@@ -198,7 +204,7 @@ Matrix SolverMatrix::toReducedRowEchelonFormWithPivot() {
 
         // eliminate all other elements below the pivot
 
-        for (Dimension subRow = pivot + 1; subRow < _rows; subRow++) {
+        for (Dimension subRow = pivot + 1; subRow < rowCount(); subRow++) {
             eliminatePivotValueInRow(pivot, subRow);                
         }    
     }

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "MatrixTest.h"
 
-void MatrixTest::expectNormalizedEqual(const Matrix& expected, const Matrix& actual, const std::string& message, const double epsilon) {
+void MatrixTest::expectNormalizedEqual(const Matrix& expected, const Matrix& actual, const std::string& message, const double epsilon) const {
         expectEqual(expected.normalize(), actual.normalize(), message, epsilon);
 };
 
@@ -48,23 +48,23 @@ TEST_F(MatrixTest, determinant) {
 
 TEST_F(MatrixTest, cofactor2d) {
     Matrix m({ {1, 2}, {3, 4} });
-    EXPECT_EQ(4, m.cofactor(0, 0));
-    EXPECT_EQ(-3, m.cofactor(0, 1));
-    EXPECT_EQ(-2, m.cofactor(1, 0));
-    EXPECT_EQ(1, m.cofactor(1, 1));
+    EXPECT_EQ(4, m.getCofactor(0, 0));
+    EXPECT_EQ(-3, m.getCofactor(0, 1));
+    EXPECT_EQ(-2, m.getCofactor(1, 0));
+    EXPECT_EQ(1, m.getCofactor(1, 1));
 }
 
 TEST_F(MatrixTest, cofactor3d) {
     Matrix n({ {1, 2, 1}, {6, -1, 0}, {-1, -2, -1} });
-    EXPECT_EQ(1, n.cofactor(0, 0));
-    EXPECT_EQ(6, n.cofactor(0, 1));
-    EXPECT_EQ(-13, n.cofactor(0, 2));
-    EXPECT_EQ(0, n.cofactor(1, 0));
-    EXPECT_EQ(0, n.cofactor(1, 1));
-    EXPECT_EQ(0, n.cofactor(1, 2));
-    EXPECT_EQ(1, n.cofactor(2, 0));
-    EXPECT_EQ(6, n.cofactor(2, 1));
-    EXPECT_EQ(-13, n.cofactor(2, 2));
+    EXPECT_EQ(1, n.getCofactor(0, 0));
+    EXPECT_EQ(6, n.getCofactor(0, 1));
+    EXPECT_EQ(-13, n.getCofactor(0, 2));
+    EXPECT_EQ(0, n.getCofactor(1, 0));
+    EXPECT_EQ(0, n.getCofactor(1, 1));
+    EXPECT_EQ(0, n.getCofactor(1, 2));
+    EXPECT_EQ(1, n.getCofactor(2, 0));
+    EXPECT_EQ(6, n.getCofactor(2, 1));
+    EXPECT_EQ(-13, n.getCofactor(2, 2));
 }
 
 TEST_F(MatrixTest, adjugate2d) {
@@ -123,4 +123,28 @@ TEST_F(MatrixTest, toArray) {
     expectEqual(expected, actual, "toArray");
 }
 
+TEST_F(MatrixTest, minor3d) {
+    Matrix m({ {3, 5, 0}, {2, -1, -7}, {6, -1, 5} });
+    expectEqual(Matrix({{-1, -7}, {-1, 5}}), m.getMinor(0, 0));
+    expectEqual(Matrix({{2, -7}, {6, 5}}), m.getMinor(0, 1));
+    expectEqual(Matrix({{2, -1}, {6, -1}}), m.getMinor(0, 2));
+    expectEqual(Matrix({{5, 0}, {-1, 5}}), m.getMinor(1, 0));
+    expectEqual(Matrix({{3, 0}, {6, 5}}), m.getMinor(1, 1));
+    expectEqual(Matrix({{3, 5}, {6, -1}}), m.getMinor(1, 2));
+    expectEqual(Matrix({{5, 0}, {-1, -7}}), m.getMinor(2, 0));
+    expectEqual(Matrix({{3, 0}, {2, -7}}), m.getMinor(2, 1));
+    expectEqual(Matrix({{3, 5}, {2, -1}}), m.getMinor(2, 2));
+}
 
+TEST_F(MatrixTest, cofactor3dbis) {
+    Matrix m({ {3, 5, 0}, {2, -1, -7}, {6, -1, 5} });
+    EXPECT_EQ(-12, m.getCofactor(0, 0));
+    EXPECT_EQ(-52, m.getCofactor(0, 1));
+    EXPECT_EQ(4, m.getCofactor(0, 2));
+    EXPECT_EQ(-25, m.getCofactor(1, 0));
+    EXPECT_EQ(15, m.getCofactor(1, 1));
+    EXPECT_EQ(33, m.getCofactor(1, 2));
+    EXPECT_EQ(-35, m.getCofactor(2, 0));
+    EXPECT_EQ(21, m.getCofactor(2, 1));
+    EXPECT_EQ(-13, m.getCofactor(2, 2));
+}

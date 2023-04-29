@@ -4,19 +4,17 @@
 
 Matrix::Matrix(const Dimension rows, const Dimension columns) : Array(rows, columns) {} 
 
-Matrix::Matrix(const Matrix& other) : Array(other){}
-
-Matrix::Matrix(const Array& other) : Array(other){}
+Matrix::Matrix(const Array& other) : Array(other) {}
 
 Matrix::Matrix(const std::initializer_list<std::initializer_list<double>> list) : Array(list) {}
 
 void Matrix::operator*=(const Matrix& other) {
-    assert(_columns == other._rows);
-    Matrix result(_rows, other._columns);
-    for (Dimension row = 0; row < _rows; row++) {
-        for (Dimension otherColumn = 0; otherColumn < other._columns; otherColumn++) {
+    assert(columnCount() == other.rowCount());
+    Matrix result(rowCount(), other.columnCount());
+    for (Dimension row = 0; row < rowCount(); row++) {
+        for (Dimension otherColumn = 0; otherColumn < other.columnCount(); otherColumn++) {
             double sum = 0;
-            for (Dimension column = 0; column < _columns; column++) {
+            for (Dimension column = 0; column < columnCount(); column++) {
                 sum += me(row, column) * other(column, otherColumn);
             }
             result(row, otherColumn) = sum;
@@ -30,10 +28,10 @@ void Matrix::operator*=(double other){
 }
 
 Matrix Matrix::adjoint() const {
-    Matrix result(_rows, _columns);
-    for (Dimension row = 0; row < _rows; row++) {
-        for (Dimension column = 0; column < _columns; column++) {
-            result(row, column) = cofactor(row, column);
+    Matrix result(rowCount(), columnCount());
+    for (Dimension row = 0; row < rowCount(); row++) {
+        for (Dimension column = 0; column < columnCount(); column++) {
+            result(row, column) = getCofactor(row, column);
         }
     }
     return result;
@@ -43,50 +41,41 @@ Matrix Matrix::adjugate() const {
     return adjoint().transpose();
 }
 
-double Matrix::cofactor(Dimension row, Dimension column) const {
-    assert(row < _rows && isSquare());
-    Matrix minor(_rows - 1, _columns - 1);
-    for (Dimension subRow = 0; subRow < _rows; subRow++) {
-        for (Dimension subColumn = 0; subColumn < _columns; subColumn++) {
-            if (subRow < row && subColumn < column) {
-                minor(subRow, subColumn) = me(subRow, subColumn);
-            }
-            if (subRow < row && subColumn > column) {
-                minor(subRow, subColumn - 1) = me(subRow, subColumn);
-            }
-            if (subRow > row && subColumn < column) {
-                minor(subRow - 1, subColumn) = me(subRow, subColumn);
-            }
-            if (subRow > row && subColumn > column) {
-                minor(subRow - 1, subColumn - 1) = me(subRow, subColumn);
-            }
-        }
-    }
-    return minor.getDeterminant() * pow(-1, row + column);
+double Matrix::getCofactor(Dimension row, Dimension column) const {
+    assert(isSquare());
+    const auto determinant = getMinor(row, column).getDeterminant();
+    return determinant * pow(-1, row + column);
 }
 
 double Matrix::getDeterminant() const {
     assert(isSquare());
-    if (_rows == 1) {
-        return _data[0];
+    if (rowCount() == 1) {
+        return me(0, 0);
     }
-    if (_rows == 2) {
-        return _data[0] * _data[3] - _data[1] * _data[2];
+    if (rowCount() == 2) {
+        return me(0, 0) * me(1, 1) - me(0, 1) * me(1, 0);
     }
     double result = 0;
-    for (Dimension row = 0; row < _rows; row++) {
-        Matrix minor(_rows - 1, _columns - 1);
-        for (Dimension subRow = 1; subRow < _rows; subRow++) {
-            for (Dimension column = 0; column < _columns; column++) {
-                if (column < row) {
-                    minor(subRow - 1, column) = me(subRow, column);  //_data[subRow * _columns + column];
-                }
-                else if (column > row) {
-                    minor(subRow - 1, column - 1) = me(subRow, column);
-                }
-            }
+    for (Dimension column = 0; column < columnCount(); column++) {
+        const auto cofactor = getCofactor(0, column);
+        result += me(0, column) * cofactor;
+    }
+    return result;
+}
+
+Matrix Matrix::getMinor(Dimension row, Dimension column) const {
+    assert(row < rowCount() && column < columnCount());
+    assert(rowCount() > 1 && columnCount() > 1);
+    Matrix result(rowCount() - 1, columnCount() - 1);
+
+    for (Dimension subRow = 0; subRow < rowCount(); subRow++) {
+        if (subRow == row) continue;
+        for (Dimension subColumn = 0; subColumn < columnCount(); subColumn++) {
+            if(subColumn == column) continue;
+            const auto targetRow = subRow < row ? subRow : subRow - 1;
+            const auto targetColumn = subColumn < column ? subColumn : subColumn - 1;
+            result(targetRow, targetColumn) = me(subRow, subColumn);
         }
-        result += _data[row] * minor.getDeterminant() * (row % 2 == 0 ? 1 : -1);
     }
     return result;
 }
@@ -94,7 +83,7 @@ double Matrix::getDeterminant() const {
 double Matrix::getTrace() const {
     assert(isSquare());
     double result = 0;
-    for (Dimension row = 0; row < _rows; row++) {
+    for (Dimension row = 0; row < rowCount(); row++) {
         result += me(row, row);
     }
     return result;
@@ -110,7 +99,7 @@ Matrix Matrix::identity(Dimension size) {
 
 Matrix Matrix::inverse() const {
     assert(isInvertible());
-    return adjugate() / getDeterminant();
+    return Matrix(adjugate() / getDeterminant());
 }
 
 bool Matrix::isInvertible() const {
@@ -119,12 +108,12 @@ bool Matrix::isInvertible() const {
 
 Matrix Matrix::normalize() const {
     double norm = 0;
-    for (const auto entry : _data) {
-        norm += entry * entry;
+    for (Dimension cell = 0; cell < size(); cell++) {
+        norm += (*this)[cell] * (*this)[cell];
     }
     norm = sqrt(norm);
     if (norm < EPSILON) return *this;
-    if (_data[0] < 0) norm = -norm;
+    if ((*this)[0] < 0) norm = -norm;
     return Matrix(*this / norm);
 }
 
@@ -133,10 +122,10 @@ Matrix Matrix::squared() const {
 }
 
 Array Matrix::toArray() const {
-    Array result(_rows, _columns);
+    Array result(rowCount(), columnCount());
     
-    for (Dimension row = 0; row < _rows; row++) {
-        for (Dimension column = 0; column < _columns; column++) {
+    for (Dimension row = 0; row < rowCount(); row++) {
+        for (Dimension column = 0; column < columnCount(); column++) {
             result(row, column) = me(row, column);
         }
     }
@@ -144,9 +133,9 @@ Array Matrix::toArray() const {
 }
 
 Matrix Matrix::transpose() const {
-    Matrix result(_columns, _rows);
-    for (Dimension row = 0; row < _rows; row++) {
-        for (Dimension column = 0; column < _columns; column++) {
+    Matrix result(columnCount(), rowCount());
+    for (Dimension row = 0; row < rowCount(); row++) {
+        for (Dimension column = 0; column < columnCount(); column++) {
             result(column, row) = me(row, column);
         }
     }

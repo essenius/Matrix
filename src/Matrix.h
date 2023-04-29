@@ -9,9 +9,8 @@ class Matrix : public Array {
 public:
     /// Constructors
     Matrix(Dimension rows, Dimension columns);
-    Matrix(std::initializer_list<std::initializer_list<double>> list);
-    Matrix(const Matrix& other);
-    Matrix(const Array& other);
+    explicit Matrix(std::initializer_list<std::initializer_list<double>> list);
+    explicit Matrix(const Array& other);
 
     // *= works differently in matrices
     void operator*=(const Matrix& other);
@@ -20,9 +19,10 @@ public:
 
     Matrix adjoint() const;
     Matrix adjugate() const;
-    double cofactor(Dimension row, Dimension column) const;
+    double getCofactor(Dimension row, Dimension column) const;
     double getDeterminant() const;
     double getTrace() const;
+    Matrix getMinor(Dimension row, Dimension column) const;
     static Matrix identity(Dimension size);
     Matrix inverse() const;
     bool isInvertible() const;

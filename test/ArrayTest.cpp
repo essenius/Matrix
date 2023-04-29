@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "ArrayTest.h"
 
-bool ArrayTest::isEqual(const Array& expected, const Array& actual, const double epsilon) {
+bool ArrayTest::isEqual(const Array& expected, const Array& actual, const double epsilon) const {
     if (expected.rows() != actual.rows()) return false;
     if (expected.columns() != actual.columns()) return false;
 
@@ -15,7 +15,7 @@ bool ArrayTest::isEqual(const Array& expected, const Array& actual, const double
 }
 
 // repeat of above, but now asserting equality and showing details
-void ArrayTest::expectEqual(const Array& expected, const Array& actual, const std::string& message, const double epsilon) {
+void ArrayTest::expectEqual(const Array& expected, const Array& actual, const std::string& message, const double epsilon) const {
     EXPECT_EQ(expected.rows(), actual.rows()) << message << " rows";
     EXPECT_EQ(expected.columns(), actual.columns()) << message << " columns";
     for (Dimension row = 0; row < expected.rows(); row++) {
@@ -25,7 +25,7 @@ void ArrayTest::expectEqual(const Array& expected, const Array& actual, const st
     }
 }
 
-bool ArrayTest::contains(const Array& matrix, const double value, const double epsilon) {
+bool ArrayTest::contains(const Array& matrix, const double value, const double epsilon) const {
     for (Dimension row = 0; row < matrix.rows(); row++) {
         for (Dimension column = 0; column < matrix.columns(); column++) {
             if (fabs(matrix(row, column) - value) <= epsilon) return true;
@@ -130,7 +130,7 @@ TEST_F(ArrayTest, setColumn) {
     Array m({ {1, 2}, {3, 4} });
 
     m.setColumn(1, Array({ { 5 }, { 7 }}));
-    const Array expected = { {1, 5}, {3, 7} };
+    const Array expected({ {1, 5}, {3, 7} });
     expectEqual(expected, m);
 }
 
@@ -138,7 +138,7 @@ TEST_F(ArrayTest, setColumnCount) {
     Array m({ {1, 2}, {3, 4} });
     auto n = m;
     n.setColumnCount(4);
-    const Array expected = { {1, 2, 0, 0}, {3, 4, 0, 0} };
+    const Array expected ( { {1, 2, 0, 0}, {3, 4, 0, 0} });
     expectEqual(expected, n, "setColumnCount larger");
     n.setColumnCount(2);
     expectEqual(m, n, "setColumnCount smaller");
@@ -153,7 +153,7 @@ TEST_F(ArrayTest, DifferentSizesNotEqual) {
 TEST_F(ArrayTest, SetColumnScalar) {
     Array m({ {1, 2}, {3, 4} });
     m.setColumn(1, 5);
-    const Array expected = { {1, 5}, {3, 5} };
+    const Array expected({ {1, 5}, {3, 5} });
     expectEqual(expected, m);
 }
 
@@ -166,7 +166,7 @@ TEST_F(ArrayTest, GetEpsilon) {
 TEST_F(ArrayTest, SwapRowsTest) {
     Array m({ {1, 2}, {3, 4}, {5, 6} });
     m.swapRows(0, 2);
-    const Array expected = { {5,6}, {3, 4}, {1, 2} };
+    const Array expected({ {5,6}, {3, 4}, {1, 2} });
     expectEqual(expected, m);
     m.swapRows(1, 1);
     expectEqual(expected, m);
@@ -175,7 +175,7 @@ TEST_F(ArrayTest, SwapRowsTest) {
 TEST_F(ArrayTest, SwapColumnsTest) {
     Array m({ {1, 2}, {3, 4}, {5, 6} });
     m.swapColumns(0, 1);
-    const Array expected = { {2, 1}, {4, 3}, {6, 5} };
+    const Array expected({ {2, 1}, {4, 3}, {6, 5} });
     expectEqual(expected, m);
     m.swapColumns(1, 1);
     expectEqual(expected, m);

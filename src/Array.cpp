@@ -1,15 +1,15 @@
 #include "Array.h"
 
-Array::Array(const Dimension rows, const Dimension columns) : _data(rows * columns) {
-    _rows = rows;
-    _columns = columns;
-    _arraySize = rows * columns;
-}
+Array::Array(const Dimension rows, const Dimension columns) : 
+    _data(rows * columns), 
+    _rows(rows),
+    _columns(columns), 
+    _arraySize(rows * columns) {}
 
-Array::Array(const std::initializer_list<std::initializer_list<double>> list) {
-    _rows = static_cast<Dimension>(list.size());
-    _columns = static_cast<Dimension>(list.begin()->size());
-    _arraySize = _rows * _columns;
+Array::Array(const std::initializer_list<std::initializer_list<double>> list):
+    _rows(static_cast<Dimension>(list.size())), 
+    _columns(static_cast<Dimension>(list.begin()->size())), 
+    _arraySize(_rows * _columns) {
     _data = std::vector<double>(_rows * _columns);
     Dimension row = 0;
     for (auto rowList : list) {
@@ -22,11 +22,14 @@ Array::Array(const std::initializer_list<std::initializer_list<double>> list) {
     }
 }
 
-Array::Array(const Array& other) {
-    _rows = other._rows;
-    _columns = other._columns;
-    _arraySize = _rows * _columns;
-    _data = other._data;
+double& Array::operator[](Dimension cell) {
+    assert(cell < _arraySize);
+    return _data[cell];
+}
+
+const double &Array::operator[](Dimension cell) const {
+    assert(cell < _arraySize);
+    return _data[cell];
 }
 
 double& Array::operator()(Dimension row, Dimension column) {
@@ -42,21 +45,21 @@ const double& Array::operator()(Dimension row, Dimension column) const {
 void Array::operator+=(const Array& other) {
     assert(other.equalSize(*this));
     for (Dimension cell = 0; cell < _arraySize; cell++) {
-        _data[cell] += other._data[cell];
+        _data[cell] += other[cell];
     }
 }
 
 void Array::operator-=(const Array& other) {
     assert(other.equalSize(*this));
     for (Dimension cell = 0; cell < _arraySize; cell++) {
-        _data[cell] -= other._data[cell];
+        _data[cell] -= other[cell];
     }
 }
 
 void Array::operator*=(const Array& other) {
     assert(other.equalSize(*this));
     for (Dimension cell = 0; cell < _arraySize; cell++) {
-        _data[cell] *= other._data[cell];
+        _data[cell] *= other[cell];
     }
 }
 
@@ -89,14 +92,19 @@ bool Array::operator==(const Array& other) const {
         return false;
     }
     for (Dimension cell = 0; cell < _arraySize; cell++) {
-        if (abs(_data[cell]- other._data[cell]) > EPSILON) {
+        if (abs(_data[cell]- other[cell]) > EPSILON) {
             return false;
         }
     }
     return true;
 }
 
-Dimension Array::columns() const {
+Dimension Array::size() const {
+    return _arraySize;
+}
+
+Dimension Array::columns() const
+{
     return _columns;
 }
 
@@ -113,6 +121,10 @@ Array Array::getColumn(const Dimension column) const {
     return result;
 }
 
+Dimension Array::columnCount() const {
+    return _columns;
+}
+
 Array Array::getRow(const Dimension row) const {
     assert(row < _rows);
     Array result(1, _columns);
@@ -120,6 +132,10 @@ Array Array::getRow(const Dimension row) const {
         result(0, column) = me(row, column);
     }
     return result;
+}
+
+Dimension Array::rowCount() const {
+    return _rows;
 }
 
 bool Array::isSquare() const {
@@ -138,7 +154,7 @@ Dimension Array::rows() const {
 Array Array::pow2() {
     Array result(*this);
     for (Dimension cell = 0; cell < _arraySize; cell++) {
-        result._data[cell] *= _data[cell];
+        result[cell] *= _data[cell];
     }
     return result;
 }
@@ -220,5 +236,3 @@ Array operator*(double left, Array right) {
     right *= left;
     return right;
 }
-
-

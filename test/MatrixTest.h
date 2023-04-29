@@ -4,5 +4,5 @@
 
 class MatrixTest : public ArrayTest {
 protected:
-    void expectNormalizedEqual(const Matrix& expected, const Matrix& actual, const std::string& message = "", const double epsilon = Array::EPSILON);
+    void expectNormalizedEqual(const Matrix& expected, const Matrix& actual, const std::string& message = "", const double epsilon = Array::EPSILON) const;
 };

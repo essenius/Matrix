@@ -9,8 +9,8 @@ typedef unsigned int Dimension;
 /// Class for more complex matrix manipulations
 class SolverMatrix: public Matrix {
 public:
-    SolverMatrix(std::initializer_list<std::initializer_list<double>> list);
-    SolverMatrix(const Matrix& other);
+    explicit SolverMatrix(std::initializer_list<std::initializer_list<double>> list);
+    explicit SolverMatrix(const Matrix& other);
     Matrix getEigenvalues() const;
     Matrix getEigenvectorFor(double lambda) const;
     Matrix getEigenvectors() const;
@@ -23,6 +23,7 @@ public:
     static constexpr double EIGEN_EPSILON = 1e-6;
 protected:
     void eliminatePivotValueInRow(Dimension pivot, Dimension row);
+    void findMaxPivot(const Dimension &pivot, Dimension& maxRow, Dimension& maxColumn) const;
     void multiplyRow(Dimension row, double factor);
 };
 

@@ -79,5 +79,6 @@
         "filesystem": "cpp",
         "__availability": "cpp",
         "functional": "cpp"
-    }
+    },
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json"
 }

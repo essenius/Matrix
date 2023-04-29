@@ -4,7 +4,7 @@
 
 class SolverMatrixTest : public MatrixTest {
 protected:
-    bool normalizedContains(const Matrix& expected, const Matrix& actual) {
+    bool normalizedContains(const Matrix& expected, const Matrix& actual) const {
         auto expectedNormalized = expected.normalize();
         for (Dimension column = 0; column < actual.columns(); column++) {
             // actual should already be normalized
@@ -22,7 +22,7 @@ TEST_F(SolverMatrixTest, toRowEchelonForm10x) {
     const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
     const Array expected({ {1, 0, 0.5, 0}, {0, 1, 0.5, 0}, {0, 0, 0, 0} });
     expectEqual(expected, m);
-    expectEqual({{0,1,0,0}, {0,0,1,0}, {1,0,0,0}, {0,0,0,1}}, permutation);
+    expectEqual(Array({{0,1,0,0}, {0,0,1,0}, {1,0,0,0}, {0,0,0,1}}), permutation);
 }
 
 
@@ -31,7 +31,7 @@ TEST_F(SolverMatrixTest, toRowEchelonForm1) {
     const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
     const Array expected({ {1, 0, 0.5, 0}, {0, 1, 0.5, 0}, {0, 0, 0, 0} });
     expectEqual(expected, m);
-    expectEqual({{0,1,0,0}, {0,0,1,0}, {1,0,0,0}, {0,0,0,1}}, permutation);
+    expectEqual(Array({{0,1,0,0}, {0,0,1,0}, {1,0,0,0}, {0,0,0,1}}), permutation);
     m.toReducedRowEchelonFormWithPivot();
     expectEqual(expected, m);
 }
@@ -41,7 +41,7 @@ TEST_F(SolverMatrixTest, toRowEchelonForm2) {
     const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
     const Array expected({ {1, 0, 2.0/3.0, 0}, {0, 1, -1.0/3.0, 0}, {0, 0, 0, 0} });
     expectEqual(expected, m);
-    expectEqual({{1,0,0,0}, {0,0,1,0}, {0,1,0,0}, {0,0,0,1}}, permutation);
+    expectEqual(Array({{1,0,0,0}, {0,0,1,0}, {0,1,0,0}, {0,0,0,1}}), permutation);
 }
 
 TEST_F(SolverMatrixTest, toRowEchelonForm3) {
@@ -49,7 +49,7 @@ TEST_F(SolverMatrixTest, toRowEchelonForm3) {
     const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
     const Array expected({ {1, 0, 1}, {0, 1, -1}, {0, 0, 0} });
     expectEqual(expected, m);
-    expectEqual({{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}, permutation);
+    expectEqual(Array({{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}), permutation);
 }
 
 TEST_F(SolverMatrixTest, toRowEchelonForm4) {
@@ -57,7 +57,7 @@ TEST_F(SolverMatrixTest, toRowEchelonForm4) {
     const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
     const Array expected({ {1, 0, 0}, {0, 1, 0}, {0, 0, 1} });
     expectEqual(expected, m);
-    expectEqual({ {0, 0, 1}, {1, 0, 0}, {0, 1, 0} }, permutation);
+    expectEqual(Array({ {0, 0, 1}, {1, 0, 0}, {0, 1, 0} }), permutation);
 }
 
 TEST_F(SolverMatrixTest, toRowEchelonFormSpecial) {
@@ -65,7 +65,7 @@ TEST_F(SolverMatrixTest, toRowEchelonFormSpecial) {
     const Matrix permutation = m.toReducedRowEchelonFormWithPivot();
     const Array expected({ {1, 0, -3.9e-6}, {0, 1, -2.62e-7}, {0, 9.74e-7, -3.46e-7} });
     expectEqual(expected, m, "toRowEchelonFormSpecial", 1e-7);
-    expectEqual({ {1, 0, 0}, {0, 0, 1}, {0, 1, 0} }, permutation);
+    expectEqual(Array({ {1, 0, 0}, {0, 0, 1}, {0, 1, 0} }), permutation);
 }
 
 // *** Null spaces and free variables ***
@@ -112,8 +112,8 @@ TEST_F(SolverMatrixTest, nullSpaceForTwoFreeVariable) {
     EXPECT_EQ(2, actual.columns());
     const auto expected1 = Matrix({ { 1 }, { 0 }, { 0 } });
     const auto expected2 = Matrix({ { 0 }, { 0 }, { 1 } });
-    expectNormalizedEqual(expected1, actual.getColumn(0), "expected1");
-    expectNormalizedEqual(expected2, actual.getColumn(1), "expected2"); 
+    expectNormalizedEqual(expected1, Matrix(actual.getColumn(0)), "expected1");
+    expectNormalizedEqual(expected2, Matrix(actual.getColumn(1)), "expected2"); 
 }
 
 TEST_F(SolverMatrixTest, nullSpaceSpecial) {
@@ -124,7 +124,7 @@ TEST_F(SolverMatrixTest, nullSpaceSpecial) {
     auto outcome = m * actual;
     const auto expected = Matrix({ { 3.9e-6 }, { 1 }, { 3.46e-7 } });
     expectNormalizedEqual(expected, actual, "null space", SolverMatrix::EIGEN_EPSILON);
-    expectEqual({{0},{0},{0}}, outcome, "matrix * null space", SolverMatrix::EIGEN_EPSILON);
+    expectEqual(Array({{0},{0},{0}}), outcome, "matrix * null space", SolverMatrix::EIGEN_EPSILON);
 } 
 
 // *** Eigenvalues, eigen vectors ***
@@ -204,8 +204,8 @@ TEST_F(SolverMatrixTest, eigenvectorsForTwoFreeVariables) {
     EXPECT_EQ(2, actualVectors1.columns());
     const auto expected1 = Matrix({ { 1 }, { 0 }, { 0 } });
     const auto expected2 = Matrix({ { 0 }, { 0 }, { 1 } });
-    expectNormalizedEqual(expected1, actualVectors1.getColumn(0), "actualVector1-1");
-    expectNormalizedEqual(expected2, actualVectors1.getColumn(1), "actualVector1-2"); 
+    expectNormalizedEqual(expected1, Matrix(actualVectors1.getColumn(0)), "actualVector1-1");
+    expectNormalizedEqual(expected2, Matrix(actualVectors1.getColumn(1)), "actualVector1-2"); 
 
     const auto actualVector2 = m.getEigenvectorFor(0.0);
     expectNormalizedEqual(Matrix({ { 0 }, { 1 }, { 0 } }), actualVector2, "actualVector2");
@@ -219,7 +219,7 @@ TEST_F(SolverMatrixTest, getEigenVectorsTwoFreeVariables) {
 
     const auto expected = Matrix({ {0, 1, 0}, {1, 0, 0}, {0, 0, 1} }).transpose();
     for (int i = 0; i < 3; ++i) {
-        expectNormalizedEqual(expected.getColumn(i), actual.getColumn(i), "column " + std::to_string(i));
+        expectNormalizedEqual(Matrix(expected.getColumn(i)), Matrix(actual.getColumn(i)), "column " + std::to_string(i));
     }
 }
 
