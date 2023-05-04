@@ -10,7 +10,7 @@ public:
     /// Constructors
     Matrix(Dimension rows, Dimension columns);
     explicit Matrix(std::initializer_list<std::initializer_list<double>> list);
-    Matrix(const Array& other);
+    explicit Matrix(const Array& other);
 
     // *= works differently in matrices
     void operator*=(const Matrix& other);

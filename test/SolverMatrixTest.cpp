@@ -233,3 +233,9 @@ TEST_F(SolverMatrixTest, getEigenvectors3dReal) {
     EXPECT_TRUE(normalizedContains(Matrix({ { -2 }, { -1 }, { 1 } }), actual)) << "eigenvector 2";
     EXPECT_TRUE(normalizedContains(Matrix({ { 1 }, { 6 }, { 16 } }), actual)) << "eigenvector 3";
 }
+
+TEST_F(SolverMatrixTest, assignMatrix) {
+    const Matrix m({ {1, 2}, {3, 4} });
+    auto sm = SolverMatrix(m);
+    expectEqual(m, sm);
+}

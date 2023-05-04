@@ -148,3 +148,9 @@ TEST_F(MatrixTest, cofactor3dbis) {
     EXPECT_EQ(21, m.getCofactor(2, 1));
     EXPECT_EQ(-13, m.getCofactor(2, 2));
 }
+
+TEST_F(MatrixTest, assignArray) {
+    const Array a({ {1, 2}, {3, 4} });
+    auto m = Matrix(a);
+    expectEqual(a, m);
+}

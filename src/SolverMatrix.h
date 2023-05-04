@@ -10,7 +10,7 @@ typedef unsigned int Dimension;
 class SolverMatrix: public Matrix {
 public:
     explicit SolverMatrix(std::initializer_list<std::initializer_list<double>> list);
-    SolverMatrix(const Matrix& other);
+    explicit SolverMatrix(const Matrix& other);
     Matrix getEigenvalues() const;
     Matrix getEigenvectorFor(double lambda) const;
     Matrix getEigenvectors() const;
