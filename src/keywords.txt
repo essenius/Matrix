@@ -2,15 +2,16 @@ Array KEYWORD1
 columnCount KEYWORD2
 getColumn KEYWORD2
 getRow KEYWORD2
-isSizeEqual KEYWORD2
 isSquare KEYWORD2
 me KEYWORD2
 pow2 KEYWORD2
 rowCount KEYWORD2
 setColumn KEYWORD2
 setColumnCount KEYWORD2
+sizeIsEqual KEYWORD2
 swapColumns KEYWORD2
 swapRows KEYWORD2
+
 Matrix KEYWORD1
 getAdjoint KEYWORD2
 getAdjugate KEYWORD2
@@ -24,6 +25,7 @@ normalized KEYWORD2
 squared KEYWORD2
 toArray KEYWORD2
 transposed KEYWORD2
+
 SolverMatrix KEYWORD1
 getEigenvalues KEYWORD2
 getEigenvectors KEYWORD2
