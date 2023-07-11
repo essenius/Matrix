@@ -39,3 +39,6 @@ build/
 
 # debugging
 output.txt
+
+# vs temp files
+.vs/

@@ -78,7 +78,11 @@
         "version": "cpp",
         "filesystem": "cpp",
         "__availability": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "cassert": "cpp"
     },
-    "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json"
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "sonarlint.analyzerProperties": {
+        
+    }
 }
