@@ -1,4 +1,5 @@
 #include "Array.h"
+#include <cassert>
 
 Array::Array(const Dimension rows, const Dimension columns) : 
     _data(rows * columns), 
@@ -43,21 +44,21 @@ const double& Array::operator()(Dimension row, Dimension column) const {
 }
 
 void Array::operator+=(const Array& other) {
-    assert(other.equalSize(*this));
+    assert(other.sizeIsEqual(*this));
     for (Dimension cell = 0; cell < _arraySize; cell++) {
         _data[cell] += other[cell];
     }
 }
 
 void Array::operator-=(const Array& other) {
-    assert(other.equalSize(*this));
+    assert(other.sizeIsEqual(*this));
     for (Dimension cell = 0; cell < _arraySize; cell++) {
         _data[cell] -= other[cell];
     }
 }
 
 void Array::operator*=(const Array& other) {
-    assert(other.equalSize(*this));
+    assert(other.sizeIsEqual(*this));
     for (Dimension cell = 0; cell < _arraySize; cell++) {
         _data[cell] *= other[cell];
     }
@@ -88,7 +89,7 @@ void Array::operator*=(const double other) {
 }
 
 bool Array::operator==(const Array& other) const {
-    if (!equalSize(other)) {
+    if (!sizeIsEqual(other)) {
         return false;
     }
     for (Dimension cell = 0; cell < _arraySize; cell++) {
@@ -99,18 +100,6 @@ bool Array::operator==(const Array& other) const {
     return true;
 }
 
-Dimension Array::size() const {
-    return _arraySize;
-}
-
-Dimension Array::columns() const
-{
-    return _columns;
-}
-
-bool Array::equalSize(const Array& other) const {
-    return _rows == other._rows && _columns == other._columns;
-}
 
 Array Array::getColumn(const Dimension column) const {
     assert(column < _columns);
@@ -147,10 +136,6 @@ double Array::me(const Dimension row, const Dimension column) const {
     return _data[row * _columns + column];
 }
 
-Dimension Array::rows() const {
-    return _rows;
-}
-
 Array Array::pow2() {
     Array result(*this);
     for (Dimension cell = 0; cell < _arraySize; cell++) {
@@ -160,7 +145,7 @@ Array Array::pow2() {
 }
 
 void Array::setColumn(Dimension column, const Array& input) {
-    assert(column < _columns && input.rows() == _rows);
+    assert(column < _columns && input.rowCount() == _rows);
     for (Dimension row = 0; row < _rows; row++) {
         (*this)(row, column) = input(row, 0);
     }
@@ -205,6 +190,14 @@ void Array::swapRows(Dimension row1, Dimension row2) {
         (*this)(row1, column) = me(row2, column);
         (*this)(row2, column) = temp;
     }
+}
+
+Dimension Array::size() const {
+    return _arraySize;
+}
+
+bool Array::sizeIsEqual(const Array& other) const {
+    return _rows == other._rows && _columns == other._columns;
 }
 
 Array operator+(Array left, const Array& right) {

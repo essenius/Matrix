@@ -27,7 +27,7 @@ void Matrix::operator*=(double other){
     Array::operator*=(other);
 }
 
-Matrix Matrix::adjoint() const {
+Matrix Matrix::getAdjoint() const {
     Matrix result(rowCount(), columnCount());
     for (Dimension row = 0; row < rowCount(); row++) {
         for (Dimension column = 0; column < columnCount(); column++) {
@@ -37,8 +37,8 @@ Matrix Matrix::adjoint() const {
     return result;
 }
 
-Matrix Matrix::adjugate() const {
-    return adjoint().transpose();
+Matrix Matrix::getAdjugate() const {
+    return getAdjoint().transposed();
 }
 
 double Matrix::getCofactor(Dimension row, Dimension column) const {
@@ -89,7 +89,7 @@ double Matrix::getTrace() const {
     return result;
 }
 
-Matrix Matrix::identity(Dimension size) {
+Matrix Matrix::getIdentity(Dimension size) {
     Matrix result(size, size);
     for (Dimension diagonalCell = 0; diagonalCell < size; diagonalCell++) {
         result(diagonalCell, diagonalCell) = 1;
@@ -97,16 +97,16 @@ Matrix Matrix::identity(Dimension size) {
     return result;
 }
 
-Matrix Matrix::inverse() const {
+Matrix Matrix::inverted() const {
     assert(isInvertible());
-    return Matrix(adjugate() / getDeterminant());
+    return Matrix(getAdjugate() / getDeterminant());
 }
 
 bool Matrix::isInvertible() const {
     return isSquare() && abs(getDeterminant()) > EPSILON;
 }
 
-Matrix Matrix::normalize() const {
+Matrix Matrix::normalized() const {
     double norm = 0;
     for (Dimension cell = 0; cell < size(); cell++) {
         norm += (*this)[cell] * (*this)[cell];
@@ -132,7 +132,7 @@ Array Matrix::toArray() const {
     return result; 
 }
 
-Matrix Matrix::transpose() const {
+Matrix Matrix::transposed() const {
     Matrix result(columnCount(), rowCount());
     for (Dimension row = 0; row < rowCount(); row++) {
         for (Dimension column = 0; column < columnCount(); column++) {

@@ -5,8 +5,8 @@
 class SolverMatrixTest : public MatrixTest {
 protected:
     bool normalizedContains(const Matrix& expected, const Matrix& actual) const {
-        auto expectedNormalized = expected.normalize();
-        for (Dimension column = 0; column < actual.columns(); column++) {
+        auto expectedNormalized = expected.normalized();
+        for (Dimension column = 0; column < actual.columnCount(); column++) {
             // actual should already be normalized
             Array vector = actual.getColumn(column);
             if (isEqual(expectedNormalized, vector, SolverMatrix::EIGEN_EPSILON)) return true;
@@ -94,14 +94,14 @@ TEST_F(SolverMatrixTest, noFreeVariableColumns) {
 TEST_F(SolverMatrixTest, nullSpaceNoFreeVariables) {
     SolverMatrix m({ {1, 0, 0}, {0, 1, 0}, {0, 0, 1} });
     const auto actual = m.getNullSpace();
-    EXPECT_EQ(0, actual.columns());
-    EXPECT_EQ(3, actual.rows());
+    EXPECT_EQ(0, actual.columnCount());
+    EXPECT_EQ(3, actual.rowCount());
 }
 
 TEST_F(SolverMatrixTest, nullSpaceForOneFreeVariable) {
     SolverMatrix m({ {1, 0, 0}, {0, 1, 0}, {0, 0, 0} });
     const auto actual = m.getNullSpace();
-    EXPECT_EQ(1, actual.columns());
+    EXPECT_EQ(1, actual.columnCount());
     expectNormalizedEqual(Matrix({ { 0 }, { 0 }, { 1 } }), actual);
 }
 
@@ -109,7 +109,7 @@ TEST_F(SolverMatrixTest, nullSpaceForTwoFreeVariable) {
     SolverMatrix m({ { 0, 1, 0}, {0, 0, 0}, {0, 0, 0} });
     const auto actual = m.getNullSpace();
     
-    EXPECT_EQ(2, actual.columns());
+    EXPECT_EQ(2, actual.columnCount());
     const auto expected1 = Matrix({ { 1 }, { 0 }, { 0 } });
     const auto expected2 = Matrix({ { 0 }, { 0 }, { 1 } });
     expectNormalizedEqual(expected1, Matrix(actual.getColumn(0)), "expected1");
@@ -120,7 +120,7 @@ TEST_F(SolverMatrixTest, nullSpaceSpecial) {
     SolverMatrix m({{1, -3.9e-6, 0}, {0, -2.62e-7, 1}, {0, -3.46e-7, 9.74e-7}});
     const auto actual = m.getNullSpace();
     
-    EXPECT_EQ(1, actual.columns());
+    EXPECT_EQ(1, actual.columnCount());
     auto outcome = m * actual;
     const auto expected = Matrix({ { 3.9e-6 }, { 1 }, { 3.46e-7 } });
     expectNormalizedEqual(expected, actual, "null space", SolverMatrix::EIGEN_EPSILON);
@@ -152,8 +152,8 @@ TEST_F(SolverMatrixTest, getEigenvalues2dNoSolution) {
 TEST_F(SolverMatrixTest, getEigenvalues3dDup) {
     SolverMatrix m({ {2, 0, 0}, {1, 2, 1}, {-1, 0, 1} });
     const auto actual = m.getEigenvalues();
-    EXPECT_EQ(2, actual.rows());
-    EXPECT_EQ(1, actual.columns());
+    EXPECT_EQ(2, actual.rowCount());
+    EXPECT_EQ(1, actual.columnCount());
     EXPECT_TRUE(contains(actual, 2));
     EXPECT_TRUE(contains(actual, 1));
 }
@@ -162,8 +162,8 @@ TEST_F(SolverMatrixTest, getEigenvalues3dOne) {
     // trace(M) = 0, trace(M^2) = 0, determinant = 0
     SolverMatrix m({ {0, 0, 1}, {0, 0, -1}, {1, 1, 0} });
     const auto actual = m.getEigenvalues();
-    EXPECT_EQ(1, actual.rows());
-    EXPECT_EQ(1, actual.columns());
+    EXPECT_EQ(1, actual.rowCount());
+    EXPECT_EQ(1, actual.columnCount());
     EXPECT_TRUE(contains(actual, 0));
 }
 
@@ -178,8 +178,8 @@ TEST_F(SolverMatrixTest, getEigenvalues3dComplex) {
 TEST_F(SolverMatrixTest, getEigenvectorsFor3dReal) {
     SolverMatrix m({ {-2, -4, 2}, {-2, 1, 2}, {4, 2, 5} });
     const auto actual = m.getEigenvalues();
-    EXPECT_EQ(3, actual.rows());
-    EXPECT_EQ(1, actual.columns());
+    EXPECT_EQ(3, actual.rowCount());
+    EXPECT_EQ(1, actual.columnCount());
     EXPECT_TRUE(contains(actual, 3.0));
     EXPECT_TRUE(contains(actual, -5.0));
     EXPECT_TRUE(contains(actual, 6.0));
@@ -195,13 +195,13 @@ TEST_F(SolverMatrixTest, getEigenvectorsFor3dReal) {
 TEST_F(SolverMatrixTest, eigenvectorsForTwoFreeVariables) {
     SolverMatrix m({ {1, 0, 0}, {0, 0, 0}, {0, 0, 1} });
     const auto actual = m.getEigenvalues();
-    EXPECT_EQ(2, actual.rows());
-    EXPECT_EQ(1, actual.columns());
+    EXPECT_EQ(2, actual.rowCount());
+    EXPECT_EQ(1, actual.columnCount());
     EXPECT_TRUE(contains(actual, 1.0));
     EXPECT_TRUE(contains(actual, 0.0));
 
     const auto actualVectors1 = m.getEigenvectorFor(1.0);
-    EXPECT_EQ(2, actualVectors1.columns());
+    EXPECT_EQ(2, actualVectors1.columnCount());
     const auto expected1 = Matrix({ { 1 }, { 0 }, { 0 } });
     const auto expected2 = Matrix({ { 0 }, { 0 }, { 1 } });
     expectNormalizedEqual(expected1, Matrix(actualVectors1.getColumn(0)), "actualVector1-1");
@@ -214,10 +214,10 @@ TEST_F(SolverMatrixTest, eigenvectorsForTwoFreeVariables) {
 TEST_F(SolverMatrixTest, getEigenVectorsTwoFreeVariables) {
     SolverMatrix m({ {1, 0, 0}, {0, 0, 0}, {0, 0, 1} });
     const auto actual = m.getEigenvectors();
-    EXPECT_EQ(3, actual.rows());
-    EXPECT_EQ(3, actual.columns());
+    EXPECT_EQ(3, actual.rowCount());
+    EXPECT_EQ(3, actual.columnCount());
 
-    const auto expected = Matrix({ {0, 1, 0}, {1, 0, 0}, {0, 0, 1} }).transpose();
+    const auto expected = Matrix({ {0, 1, 0}, {1, 0, 0}, {0, 0, 1} }).transposed();
     for (int i = 0; i < 3; ++i) {
         expectNormalizedEqual(Matrix(expected.getColumn(i)), Matrix(actual.getColumn(i)), "column " + std::to_string(i));
     }
@@ -226,8 +226,8 @@ TEST_F(SolverMatrixTest, getEigenVectorsTwoFreeVariables) {
 TEST_F(SolverMatrixTest, getEigenvectors3dReal) {
     SolverMatrix m({ {-2, -4, 2}, {-2, 1, 2}, {4, 2, 5} });
     const auto actual = m.getEigenvectors();
-    EXPECT_EQ(3, actual.rows());
-    EXPECT_EQ(3, actual.columns());
+    EXPECT_EQ(3, actual.rowCount());
+    EXPECT_EQ(3, actual.columnCount());
 
     EXPECT_TRUE(normalizedContains(Matrix({ { -2 }, { 3 }, { 1 } }), actual)) << "eigenvector 1";
     EXPECT_TRUE(normalizedContains(Matrix({ { -2 }, { -1 }, { 1 } }), actual)) << "eigenvector 2";

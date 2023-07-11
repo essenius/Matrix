@@ -99,7 +99,7 @@ Matrix SolverMatrix::getNullSpace() const {
 Matrix SolverMatrix::getEigenvectorFor(const double lambda) const {
     assert(isSquare());
 
-    auto beta =  SolverMatrix(*this - identity(rowCount()) * lambda);
+    auto beta =  SolverMatrix(*this - getIdentity(rowCount()) * lambda);
     auto permutation = beta.toReducedRowEchelonFormWithPivot();
     return permutation * beta.getNullSpace();
 }
@@ -110,10 +110,10 @@ Matrix SolverMatrix::getEigenvectors() const {
     const auto eigenvalues = getEigenvalues();
     Matrix result(rowCount(), rowCount());
     Dimension currentRow = 0;
-    for (Dimension eigenValueIndex = 0; eigenValueIndex < eigenvalues.rows(); eigenValueIndex++) {
+    for (Dimension eigenValueIndex = 0; eigenValueIndex < eigenvalues.rowCount(); eigenValueIndex++) {
         auto eigenvectors = getEigenvectorFor(eigenvalues(eigenValueIndex, 0));
-        for (Dimension vectorIndex = 0; vectorIndex < eigenvectors.columns(); vectorIndex++) {
-            auto eigenvector = Matrix(eigenvectors.getColumn(vectorIndex)).normalize();
+        for (Dimension vectorIndex = 0; vectorIndex < eigenvectors.columnCount(); vectorIndex++) {
+            auto eigenvector = Matrix(eigenvectors.getColumn(vectorIndex)).normalized();
             result.setColumn(currentRow, eigenvector);
             currentRow++;
         }
@@ -181,7 +181,7 @@ void SolverMatrix::findMaxPivot(const Dimension& pivot, Dimension& maxRow, Dimen
 }
 
 Matrix SolverMatrix::toReducedRowEchelonFormWithPivot() {
-    auto permutation = Matrix::identity(columnCount());
+    auto permutation = Matrix::getIdentity(columnCount());
     const auto maxPivot = std::min(rowCount(), columnCount());
     
     for (Dimension pivot = 0; pivot < maxPivot; pivot++) {

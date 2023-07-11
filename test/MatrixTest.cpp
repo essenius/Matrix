@@ -2,7 +2,7 @@
 #include "MatrixTest.h"
 
 void MatrixTest::expectNormalizedEqual(const Matrix& expected, const Matrix& actual, const std::string& message, const double epsilon) const {
-        expectEqual(expected.normalize(), actual.normalize(), message, epsilon);
+        expectEqual(expected.normalized(), actual.normalized(), message, epsilon);
 };
 
 TEST_F(MatrixTest, add) {
@@ -70,49 +70,49 @@ TEST_F(MatrixTest, cofactor3d) {
 TEST_F(MatrixTest, adjugate2d) {
     Matrix m({ {1, 2}, {3, 4} });
     Matrix expected({ {4, -2}, {-3, 1} });
-    Matrix actual = m.adjugate();
+    Matrix actual = m.getAdjugate();
     expectEqual(expected, actual);
 }
 
 TEST_F(MatrixTest, adjugate3d) {
     Matrix m({ {1, 2, 3}, {0, 1, 4}, {5, 6, 0} });
     Matrix expected({ {-24, 18, 5}, {20, -15, -4}, {-5, 4, 1} });
-    Matrix actual = m.adjugate();
+    Matrix actual = m.getAdjugate();
     expectEqual(expected, actual);
 }
 
 TEST_F(MatrixTest, inverse2d) {
     Matrix m({ {1, 2}, {3, 4} });
-    Matrix actual = m.inverse();
+    Matrix actual = m.inverted();
     expectEqual(Matrix({ {-2, 1}, {1.5, -0.5} }), actual, "inverse");
-    expectEqual(m, actual.inverse(), "inverse of inverse");
+    expectEqual(m, actual.inverted(), "inverse of inverse");
 }
 
 TEST_F(MatrixTest, inverse3d) {
     Matrix m({ {1, 2, 3}, {0, 1, 4}, {5, 6, 0} });
     const Matrix expected({ {-24, 18, 5}, {20, -15, -4}, {-5, 4, 1} });
-    const Matrix actual = m.inverse();
+    const Matrix actual = m.inverted();
     expectEqual(expected, actual, "inverse");
-    expectEqual(m, actual.inverse(), "inverse of inverse");
+    expectEqual(m, actual.inverted(), "inverse of inverse");
 }
 
 TEST_F(MatrixTest, normalize) {
     Matrix m({ {3, 4} });
     Matrix expected({ {0.6, 0.8} });
-    Matrix actual = m.normalize();
+    Matrix actual = m.normalized();
     expectEqual(expected, actual, "normalize all positive");
-    expectEqual(Matrix({{0}}), Matrix({{0}}).normalize(), "normalize zero");
+    expectEqual(Matrix({{0}}), Matrix({{0}}).normalized(), "normalize zero");
     const Matrix m2({{-1, 4, -2, 2}});
     const Matrix expected2({{0.2, -0.8, 0.4, -0.4}});
-    expectEqual(expected2, m2.normalize(), "normalize first negative");
+    expectEqual(expected2, m2.normalized(), "normalize first negative");
 }   
 
 TEST_F(MatrixTest, transpose) {
     Matrix m({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
     const Matrix expected({ {1, 4, 7}, {2, 5, 8}, {3, 6, 9} });
-    const Matrix actual = m.transpose();
+    const Matrix actual = m.transposed();
     expectEqual(expected, actual, "Transpose");
-    expectEqual(m, actual.transpose(), "Transposed transpose");
+    expectEqual(m, actual.transposed(), "Transposed transpose");
 }
 
 TEST_F(MatrixTest, toArray) {

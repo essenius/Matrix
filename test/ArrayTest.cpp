@@ -2,11 +2,11 @@
 #include "ArrayTest.h"
 
 bool ArrayTest::isEqual(const Array& expected, const Array& actual, const double epsilon) const {
-    if (expected.rows() != actual.rows()) return false;
-    if (expected.columns() != actual.columns()) return false;
+    if (expected.rowCount() != actual.rowCount()) return false;
+    if (expected.columnCount() != actual.columnCount()) return false;
 
-    for (Dimension row = 0; row < expected.rows(); row++) {
-        for (Dimension column = 0; column < expected.columns(); column++) {
+    for (Dimension row = 0; row < expected.rowCount(); row++) {
+        for (Dimension column = 0; column < expected.columnCount(); column++) {
             auto difference = expected(row, column) - actual(row, column);
             if (abs(difference) > epsilon) return false;
         }
@@ -16,18 +16,18 @@ bool ArrayTest::isEqual(const Array& expected, const Array& actual, const double
 
 // repeat of above, but now asserting equality and showing details
 void ArrayTest::expectEqual(const Array& expected, const Array& actual, const std::string& message, const double epsilon) const {
-    EXPECT_EQ(expected.rows(), actual.rows()) << message << " rows";
-    EXPECT_EQ(expected.columns(), actual.columns()) << message << " columns";
-    for (Dimension row = 0; row < expected.rows(); row++) {
-        for (Dimension column = 0; column < expected.columns(); column++) {
+    EXPECT_EQ(expected.rowCount(), actual.rowCount()) << message << " rows";
+    EXPECT_EQ(expected.columnCount(), actual.columnCount()) << message << " columns";
+    for (Dimension row = 0; row < expected.rowCount(); row++) {
+        for (Dimension column = 0; column < expected.columnCount(); column++) {
             EXPECT_NEAR(expected(row, column), actual(row, column), epsilon) << message <<  "(" << row << ", " << column << ")";
         }
     }
 }
 
 bool ArrayTest::contains(const Array& matrix, const double value, const double epsilon) const {
-    for (Dimension row = 0; row < matrix.rows(); row++) {
-        for (Dimension column = 0; column < matrix.columns(); column++) {
+    for (Dimension row = 0; row < matrix.rowCount(); row++) {
+        for (Dimension column = 0; column < matrix.columnCount(); column++) {
             if (fabs(matrix(row, column) - value) <= epsilon) return true;
         }
     }

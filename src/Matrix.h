@@ -17,19 +17,19 @@ public:
     // this one doesn't, but it's still needed
     void operator*=(double other);
 
-    Matrix adjoint() const;
-    Matrix adjugate() const;
+    Matrix getAdjoint() const;
+    Matrix getAdjugate() const;
     double getCofactor(Dimension row, Dimension column) const;
     double getDeterminant() const;
     double getTrace() const;
     Matrix getMinor(Dimension row, Dimension column) const;
-    static Matrix identity(Dimension size);
-    Matrix inverse() const;
+    static Matrix getIdentity(Dimension size);
+    Matrix inverted() const;
     bool isInvertible() const;
-    Matrix normalize() const;
+    Matrix normalized() const;
     Matrix squared() const;
     Array toArray() const;
-    Matrix transpose() const;
+    Matrix transposed() const;
 
     // need to redefine these as well, didn't find a better way
     friend Matrix operator+(Matrix left, const Matrix& right);
