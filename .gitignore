@@ -34,8 +34,9 @@
 # code coverage files
 *.profraw
 
-# build folder
+# build folders
 build/
+out/
 
 # debugging
 output.txt
