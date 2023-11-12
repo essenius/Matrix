@@ -26,5 +26,5 @@ set(mySources Array.cpp Matrix.cpp SolverMatrix.cpp)
 target_sources (${matrixName} PUBLIC ${myHeaders} PRIVATE ${mySources})
 target_include_directories(${matrixName} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-#message(STATUS "Installing to ${CMAKE_CURRENT_BINARY_DIR}")
-#install(TARGETS ${matrixName} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+message(STATUS "Installing to ${CMAKE_CURRENT_BINARY_DIR}")
+install(TARGETS ${matrixName} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
