@@ -1,10 +1,21 @@
-#include "SolverMatrix.h"
+// Copyright 2023 Rik Essenius
+// 
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+// except in compliance with the License. You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the License
+// is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and limitations under the License.
 
-#include <stdexcept>
+#include "SolverMatrix.h"
+#include <cassert>
 #include <cmath>
 #include <iostream>
+#include <corecrt_math_defines.h>
 
-SolverMatrix::SolverMatrix(std::initializer_list<std::initializer_list<double>> list) : Matrix(list) {}
+SolverMatrix::SolverMatrix(const std::initializer_list<std::initializer_list<double>> list) : Matrix(list) {}
 
 SolverMatrix::SolverMatrix(const Matrix &other) : Matrix(other) {}
 
@@ -45,7 +56,7 @@ Matrix SolverMatrix::getEigenvalues() const {
 
     const double discriminant = q * q * q + r * r ;
 
-    if (discriminant < -EPSILON) {
+    if (discriminant < -Epsilon) {
         // Three distinct real roots (or >1 coinciding roots if discriminant = 0)
         q = -q;
         const double theta = acos(r / sqrt(q * q * q));
@@ -56,7 +67,7 @@ Matrix SolverMatrix::getEigenvalues() const {
             { qFactor * cos((theta + 4 * M_PI) / 3.0) - a2 / 3.0 }
         });
     }
-    if (discriminant > EPSILON) {
+    if (discriminant > Epsilon) {
         // One real root and two complex conjugate roots. Return just the real one.
         const double s = cbrt(r + sqrt(discriminant));
         const double t = cbrt(r - sqrt(discriminant));
@@ -66,7 +77,7 @@ Matrix SolverMatrix::getEigenvalues() const {
     const double alpha = cbrt(r);
     const double root1 = -a2 / 3 + 2 * alpha;
     const double root2 = -alpha - a2 / 3;
-    return fabs(root1 - root2) < EPSILON ? Matrix({ { root1 } }) : Matrix({ {root1}, {root2} });
+    return fabs(root1 - root2) < Epsilon ? Matrix({ { root1 } }) : Matrix({ {root1}, {root2} });
 }
 
 
@@ -82,10 +93,10 @@ Matrix SolverMatrix::getNullSpace() const {
     }
     Matrix result(rowCount(), static_cast<Dimension>(freeVariables.size()));
     auto resultColumn = 0;
-    for (auto freeVariable : freeVariables) {
+    for (const auto freeVariable : freeVariables) {
         result.setColumn(resultColumn, getColumn(freeVariable) * -1);
         result(freeVariable, resultColumn) = 1;
-        for(auto otherFreeVariable: freeVariables) {
+        for(const auto otherFreeVariable: freeVariables) {
             if (otherFreeVariable != freeVariable) {
                 result(otherFreeVariable, resultColumn) = 0;
             }
@@ -100,13 +111,11 @@ Matrix SolverMatrix::getEigenvectorFor(const double lambda) const {
     assert(isSquare());
 
     auto beta =  SolverMatrix(*this - getIdentity(rowCount()) * lambda);
-    auto permutation = beta.toReducedRowEchelonFormWithPivot();
+    const auto permutation = beta.toReducedRowEchelonFormWithPivot();
     return permutation * beta.getNullSpace();
 }
 
 Matrix SolverMatrix::getEigenvectors() const {
-    assert(isSquare());
-
     const auto eigenvalues = getEigenvalues();
     Matrix result(rowCount(), rowCount());
     Dimension currentRow = 0;
@@ -131,7 +140,7 @@ std::vector<Dimension> SolverMatrix::getFreeVariables() const {
     Dimension column = 0;
     Dimension resultsFound = 0;
     while (resultsFound < rowCount()) {
-        if (abs(me(row, column)) <= EIGEN_EPSILON) {
+        if (abs(me(row, column)) <= EigenEpsilon) {
             result.push_back(column);
             resultsFound++;
         } else {
@@ -147,18 +156,18 @@ std::vector<Dimension> SolverMatrix::getFreeVariables() const {
     return result;
 }
 
-void SolverMatrix::eliminatePivotValueInRow(Dimension pivot, Dimension row) {
+void SolverMatrix::eliminatePivotValueInRow(const Dimension pivot, const Dimension row) {
     assert(row != pivot);
-    if (me(pivot, pivot) < EIGEN_EPSILON) return;
+    if (me(pivot, pivot) < EigenEpsilon) return;
     const double valueToEliminate = me(row, pivot);               
-    if (abs(valueToEliminate) < EIGEN_EPSILON) return;
+    if (abs(valueToEliminate) < EigenEpsilon) return;
     const double compensationFactor = -valueToEliminate / me(pivot, pivot);
     for (Dimension column = 0; column < columnCount(); column++) {
         (*this)(row, column) += compensationFactor * me(pivot, column);
     }
 }
 
-void SolverMatrix::multiplyRow(Dimension row, double factor) {
+void SolverMatrix::multiplyRow(const Dimension row, const double factor) {
     for (Dimension column = 0; column < columnCount(); column++) {
         (*this)(row, column) *= factor;
     }
@@ -181,7 +190,7 @@ void SolverMatrix::findMaxPivot(const Dimension& pivot, Dimension& maxRow, Dimen
 }
 
 Matrix SolverMatrix::toReducedRowEchelonFormWithPivot() {
-    auto permutation = Matrix::getIdentity(columnCount());
+    auto permutation = getIdentity(columnCount());
     const auto maxPivot = std::min(rowCount(), columnCount());
     
     for (Dimension pivot = 0; pivot < maxPivot; pivot++) {
@@ -197,8 +206,8 @@ Matrix SolverMatrix::toReducedRowEchelonFormWithPivot() {
 
         // make pivot element equal to 1
 
-        auto pivotValue = me(pivot, pivot);
-        if (abs(pivotValue) > EIGEN_EPSILON) {
+        const auto pivotValue = me(pivot, pivot);
+        if (abs(pivotValue) > EigenEpsilon) {
             multiplyRow(pivot, 1.0 / pivotValue);
         }
 
@@ -214,7 +223,7 @@ Matrix SolverMatrix::toReducedRowEchelonFormWithPivot() {
     // using int instead of Dimension as Dimension is never negative
 
     for (int pivot = maxPivot - 1; pivot >= 0; pivot--) {
-        if (abs(me(pivot, pivot)) > EIGEN_EPSILON) {
+        if (abs(me(pivot, pivot)) > EigenEpsilon) {
             multiplyRow(pivot, 1.0 / me(pivot, pivot));
         }
 

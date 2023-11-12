@@ -1,4 +1,16 @@
+// Copyright 2023 Rik Essenius
+// 
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+// except in compliance with the License. You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the License
+// is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and limitations under the License.
+
 #include "Matrix.h"
+#include <cassert>
 #include <stdexcept>
 #include <cmath>
 
@@ -23,7 +35,7 @@ void Matrix::operator*=(const Matrix& other) {
     *this = result;
 }
 
-void Matrix::operator*=(double other){
+void Matrix::operator*=(const double other){
     Array::operator*=(other);
 }
 
@@ -41,8 +53,7 @@ Matrix Matrix::getAdjugate() const {
     return getAdjoint().transposed();
 }
 
-double Matrix::getCofactor(Dimension row, Dimension column) const {
-    assert(isSquare());
+double Matrix::getCofactor(const Dimension row, const Dimension column) const {
     const auto determinant = getMinor(row, column).getDeterminant();
     return determinant * pow(-1, row + column);
 }
@@ -63,9 +74,9 @@ double Matrix::getDeterminant() const {
     return result;
 }
 
-Matrix Matrix::getMinor(Dimension row, Dimension column) const {
-    assert(row < rowCount() && column < columnCount());
-    assert(rowCount() > 1 && columnCount() > 1);
+Matrix Matrix::getMinor(const Dimension row, const Dimension column) const {
+    assert(row < rowCount() && column < columnCount() &&
+	       rowCount() > 1 && columnCount() > 1);
     Matrix result(rowCount() - 1, columnCount() - 1);
 
     for (Dimension subRow = 0; subRow < rowCount(); subRow++) {
@@ -89,7 +100,7 @@ double Matrix::getTrace() const {
     return result;
 }
 
-Matrix Matrix::getIdentity(Dimension size) {
+Matrix Matrix::getIdentity(const Dimension size) {
     Matrix result(size, size);
     for (Dimension diagonalCell = 0; diagonalCell < size; diagonalCell++) {
         result(diagonalCell, diagonalCell) = 1;
@@ -103,7 +114,7 @@ Matrix Matrix::inverted() const {
 }
 
 bool Matrix::isInvertible() const {
-    return isSquare() && abs(getDeterminant()) > EPSILON;
+    return isSquare() && abs(getDeterminant()) > Epsilon;
 }
 
 Matrix Matrix::normalized() const {
@@ -112,7 +123,7 @@ Matrix Matrix::normalized() const {
         norm += (*this)[cell] * (*this)[cell];
     }
     norm = sqrt(norm);
-    if (norm < EPSILON) return *this;
+    if (norm < Epsilon) return *this;
     if ((*this)[0] < 0) norm = -norm;
     return Matrix(*this / norm);
 }
@@ -157,12 +168,12 @@ Matrix operator*(Matrix left, const Matrix &right) {
     return left;
 }
 
-Matrix operator*(Matrix left, double right) {
+Matrix operator*(Matrix left, const double right) {
     left *= right;
     return left;
 }
 
-Matrix operator*(double left, Matrix right) {
+Matrix operator*(const double left, Matrix right) {
     right *= left;
     return right;
 }

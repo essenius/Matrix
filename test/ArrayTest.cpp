@@ -1,3 +1,15 @@
+// Copyright 2023 Rik Essenius
+// 
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+// except in compliance with the License. You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the License
+// is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and limitations under the License.
+
+#include "pch.h"
 #include <gtest/gtest.h>
 #include "ArrayTest.h"
 
@@ -7,7 +19,7 @@ bool ArrayTest::isEqual(const Array& expected, const Array& actual, const double
 
     for (Dimension row = 0; row < expected.rowCount(); row++) {
         for (Dimension column = 0; column < expected.columnCount(); column++) {
-            auto difference = expected(row, column) - actual(row, column);
+	        const auto difference = expected(row, column) - actual(row, column);
             if (abs(difference) > epsilon) return false;
         }
     }
@@ -46,7 +58,7 @@ TEST_F(ArrayTest, initArray) {
 }
 
 TEST_F(ArrayTest, copyAddArray) {
-    Array m({ {1, 2}, {3,4} });
+	const Array m({ {1, 2}, {3,4} });
     EXPECT_TRUE(m.isSquare());
     Array n = m;
     EXPECT_EQ(1, n(0, 0));
@@ -63,23 +75,23 @@ TEST_F(ArrayTest, copyAddArray) {
 }
 
 TEST_F(ArrayTest, addArray) {
-    Array m({ {1, 2}, {3,4} });
-    Array n({ {1, 2}, {3,4} });
-    Array o = m + n;
+	const Array m({ {1, 2}, {3,4} });
+	const Array n({ {1, 2}, {3,4} });
+	const Array o = m + n;
     EXPECT_TRUE(o == Array({ {2, 4}, {6, 8} }));
 }
 
 TEST_F(ArrayTest, subtractArray) {
-    Array m({ {1, 2}, {3,4} });
-    Array n({ {1, 2}, {3,4} });
-    Array o = m - n;
+	const Array m({ {1, 2}, {3,4} });
+	const Array n({ {1, 2}, {3,4} });
+	const Array o = m - n;
     EXPECT_TRUE(o == Array({ {0, 0}, {0, 0} }));
 }
 
 TEST_F(ArrayTest, multiplyArray) {
-    Array m({ {1, 2}, {3,4} });
-    Array n({ {1, 2}, {3,4} });
-    Array o = m * n;
+	const Array m({ {1, 2}, {3,4} });
+	const Array n({ {1, 2}, {3,4} });
+	const Array o = m * n;
     EXPECT_TRUE(o == Array({ {1, 4}, {9, 16} }));
 }
 
@@ -99,7 +111,7 @@ TEST_F(ArrayTest, multiplyScalar) {
     Array m({ {1, 2}, {3,4} });
     m *= 2;
     EXPECT_TRUE(m == Array({ {2, 4}, {6, 8} }));
-    Array n = 2 * m;
+    const Array n = 2 * m;
     EXPECT_TRUE(n == Array({ {4, 8}, {12, 16} }));
 }
 
@@ -110,20 +122,20 @@ TEST_F(ArrayTest, divideScalar) {
 }
 
 TEST_F(ArrayTest, getColumn) {
-    Array m({ {1,2},{3,4} });
+	const Array m({ {1,2},{3,4} });
     const auto column = m.getColumn(1);
     expectEqual(Array({{2}, {4}}), column);
 }
 
 TEST_F(ArrayTest, getRow) {
-    Array m({ {1,2},{3,4} });
+	const Array m({ {1,2},{3,4} });
     const auto row = m.getRow(0);
     expectEqual(Array({ {1, 2} }), row);
 }
 
 TEST_F(ArrayTest, pow2) {
-    Array m({ {1,2},{3,4} });
-    auto actual = m.pow2();
+	const Array m({ {1,2},{3,4} });
+	const auto actual = m.pow2();
     expectEqual(Array({ {1, 4}, {9, 16} }), actual);
 }
 TEST_F(ArrayTest, setColumn) {
@@ -135,7 +147,7 @@ TEST_F(ArrayTest, setColumn) {
 }
 
 TEST_F(ArrayTest, setColumnCount) {
-    Array m({ {1, 2}, {3, 4} });
+	const Array m({ {1, 2}, {3, 4} });
     auto n = m;
     n.setColumnCount(4);
     const Array expected ( { {1, 2, 0, 0}, {3, 4, 0, 0} });
@@ -145,8 +157,8 @@ TEST_F(ArrayTest, setColumnCount) {
 }
 
 TEST_F(ArrayTest, DifferentSizesNotEqual) {
-    Array m({ {1, 2}, {3, 4} });
-    Array n({{1}});
+	const Array m({ {1, 2}, {3, 4} });
+	const Array n({{1}});
     EXPECT_FALSE(m == n);
 }
 
@@ -158,13 +170,14 @@ TEST_F(ArrayTest, SetColumnScalar) {
 }
 
 TEST_F(ArrayTest, GetEpsilon) {
-    Array m({{Array::EPSILON / 2}});
-    Array n({{Array::EPSILON / 3}});
+	const Array m({{Array::Epsilon / 2}});
+	const Array n({{Array::Epsilon / 3}});
     expectEqual(m, n);
 }
 
 TEST_F(ArrayTest, SwapRowsTest) {
     Array m({ {1, 2}, {3, 4}, {5, 6} });
+    EXPECT_FALSE(m.isSquare()) << "Not square";
     m.swapRows(0, 2);
     const Array expected({ {5,6}, {3, 4}, {1, 2} });
     expectEqual(expected, m);
@@ -179,4 +192,24 @@ TEST_F(ArrayTest, SwapColumnsTest) {
     expectEqual(expected, m);
     m.swapColumns(1, 1);
     expectEqual(expected, m);
+}
+
+TEST_F(ArrayTest, AssertTest) {
+	Array m({ {1, 2} });
+	EXPECT_DEATH(m.swapColumns(0, 2), "Assertion failed: column1 < _columns && column2 < _columns");
+	EXPECT_DEATH(m.swapColumns(2, 0), "Assertion failed: column1 < _columns && column2 < _columns");
+	EXPECT_DEATH(m.swapRows(0, 2), "Assertion failed: row1 < _rows && row2 < _rows");
+	EXPECT_DEATH(m.swapRows(2, 0), "Assertion failed: row1 < _rows && row2 < _rows");
+	EXPECT_DEATH(m.getColumn(2), "Assertion failed: column < _columns");
+	EXPECT_DEATH(m.getRow(2), "Assertion failed: row < _rows");
+    EXPECT_DEATH(m[2], "Assertion failed: cell < _arraySize");
+    EXPECT_DEATH(m(0, 2), "Assertion failed: row < _rows && column < _columns");
+    EXPECT_DEATH(m(2, 0), "Assertion failed: row < _rows && column < _columns");
+    EXPECT_DEATH(m.me(2, 0), "Assertion failed: row < _rows && column < _columns");
+    EXPECT_DEATH(m.me(0, 2), "Assertion failed: row < _rows && column < _columns");
+    const Array n({ {1, 2}, {3, 4} });
+    EXPECT_DEATH(m += n, "Assertion failed: other.sizeIsEqual\\(\\*this\\)");
+    EXPECT_DEATH(m -= n, "Assertion failed: other.sizeIsEqual\\(\\*this\\)");
+    EXPECT_DEATH(m *= n, "Assertion failed: other.sizeIsEqual\\(\\*this\\)");
+
 }

@@ -20,7 +20,7 @@ public:
     // converts itself to RREF and returns the permutation matrix. 
     Matrix toReducedRowEchelonFormWithPivot();
 
-    static constexpr double EIGEN_EPSILON = 1e-6;
+    static constexpr double EigenEpsilon = 1e-6;
 protected:
     void eliminatePivotValueInRow(Dimension pivot, Dimension row);
     void findMaxPivot(const Dimension &pivot, Dimension& maxRow, Dimension& maxColumn) const;
