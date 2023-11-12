@@ -5,7 +5,9 @@ set(matrixTestName ${matrixName}Test)
 
 project(${matrixName} VERSION 0.0.4 LANGUAGES CXX)
 
-if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+# We only want to enable testing and code coverage for the top level project
+# On Windows, these are also only used when building a vcpkg package.
+if ((CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR) AND NOT (WIN32))
   set(TOP_LEVEL ON)
 else()
   set(TOP_LEVEL OFF)
@@ -18,7 +20,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${PROJECT_SOURCE_DIR}/lib;${PROJECT_BINARY_DIR}/lib/cmake")
 
-if (TOP_LEVEL AND NOT (WIN32)) 
+if (TOP_LEVEL) 
   message(STATUS "Top level project - enabling code coverage")
   add_subdirectory(lib)
   set(CODE_COVERAGE ON)
@@ -32,7 +34,5 @@ if(TOP_LEVEL)
   message(STATUS "Top level project - enabling tests")
   enable_testing()
   add_subdirectory(test)
-  if (NOT(WIN32))
-	target_code_coverage(${matrixTestName} EXCLUDE build/_deps/googletest-src/* test/*) 
-  endif()
+  target_code_coverage(${matrixTestName} EXCLUDE build/_deps/googletest-src/* test/*) 
 endif()
