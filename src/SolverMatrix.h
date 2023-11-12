@@ -4,7 +4,7 @@
 #include <vector>
 #include "Matrix.h"
 
-typedef unsigned int Dimension;
+using Dimension = unsigned int;
 
 /// Class for more complex matrix manipulations
 class SolverMatrix: public Matrix {
