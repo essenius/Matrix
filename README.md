@@ -7,7 +7,8 @@ This repo provides a library for matrix operations. It is intended for use in Ar
 Class for array manipulations (coefficient wise):
 
 - `+`, `-`, `*`, `/`: operations per element in the array with another array or with a scalar
-- `+=`, `-=`, `*=`: updates element by the operation (argument is array or scalar) 			- `/=`: divide elements by scalar
+- `+=`, `-=`, `*=`: updates element by the operation (argument is array or scalar) 			
+- `/=`: divide elements by scalar
 - `==`: test for equality of all elements
 - `rowCount`, `columnCount`: number of rows/columns in the array
 - `getColumn`, `getRow`: get one row or column
