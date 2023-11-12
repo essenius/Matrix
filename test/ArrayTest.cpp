@@ -196,20 +196,20 @@ TEST_F(ArrayTest, SwapColumnsTest) {
 
 TEST_F(ArrayTest, AssertTest) {
 	Array m({ {1, 2} });
-	EXPECT_DEATH(m.swapColumns(0, 2), "Assertion failed: column1 < _columns && column2 < _columns");
-	EXPECT_DEATH(m.swapColumns(2, 0), "Assertion failed: column1 < _columns && column2 < _columns");
-	EXPECT_DEATH(m.swapRows(0, 2), "Assertion failed: row1 < _rows && row2 < _rows");
-	EXPECT_DEATH(m.swapRows(2, 0), "Assertion failed: row1 < _rows && row2 < _rows");
-	EXPECT_DEATH(m.getColumn(2), "Assertion failed: column < _columns");
-	EXPECT_DEATH(m.getRow(2), "Assertion failed: row < _rows");
-    EXPECT_DEATH(m[2], "Assertion failed: cell < _arraySize");
-    EXPECT_DEATH(m(0, 2), "Assertion failed: row < _rows && column < _columns");
-    EXPECT_DEATH(m(2, 0), "Assertion failed: row < _rows && column < _columns");
-    EXPECT_DEATH(m.me(2, 0), "Assertion failed: row < _rows && column < _columns");
-    EXPECT_DEATH(m.me(0, 2), "Assertion failed: row < _rows && column < _columns");
+	EXPECT_DEATH(m.swapColumns(0, 2), "Assertion failed: .*column1 < _columns && column2 < _columns");
+	EXPECT_DEATH(m.swapColumns(2, 0), "Assertion failed: .*column1 < _columns && column2 < _columns");
+	EXPECT_DEATH(m.swapRows(0, 2), "Assertion failed: .*row1 < _rows && row2 < _rows");
+	EXPECT_DEATH(m.swapRows(2, 0), "Assertion failed: .*row1 < _rows && row2 < _rows");
+	EXPECT_DEATH(m.getColumn(2), "Assertion failed: .*column < _columns");
+	EXPECT_DEATH(m.getRow(2), "Assertion failed: .*row < _rows");
+    EXPECT_DEATH(m[2], "Assertion failed: .*cell < _arraySize");
+    EXPECT_DEATH(m(0, 2), "Assertion failed: .*row < _rows && column < _columns");
+    EXPECT_DEATH(m(2, 0), "Assertion failed: .*row < _rows && column < _columns");
+    EXPECT_DEATH(m.me(2, 0), "Assertion failed: .*row < _rows && column < _columns");
+    EXPECT_DEATH(m.me(0, 2), "Assertion failed: .*row < _rows && column < _columns");
     const Array n({ {1, 2}, {3, 4} });
-    EXPECT_DEATH(m += n, "Assertion failed: other.sizeIsEqual\\(\\*this\\)");
-    EXPECT_DEATH(m -= n, "Assertion failed: other.sizeIsEqual\\(\\*this\\)");
-    EXPECT_DEATH(m *= n, "Assertion failed: other.sizeIsEqual\\(\\*this\\)");
+    EXPECT_DEATH(m += n, "Assertion failed: .*other.sizeIsEqual\\(\\*this\\)");
+    EXPECT_DEATH(m -= n, "Assertion failed: .*other.sizeIsEqual\\(\\*this\\)");
+    EXPECT_DEATH(m *= n, "Assertion failed: .*other.sizeIsEqual\\(\\*this\\)");
 
 }
