@@ -16,6 +16,7 @@
 #ifdef _WIN32
 #include <corecrt_math_defines.h>
 #endif
+
 SolverMatrix::SolverMatrix(const std::initializer_list<std::initializer_list<double>> list) : Matrix(list) {}
 
 SolverMatrix::SolverMatrix(const Matrix &other) : Matrix(other) {}

@@ -36,3 +36,5 @@ if(TOP_LEVEL)
   add_subdirectory(test)
   target_code_coverage(${matrixTestName} EXCLUDE build/_deps/googletest-src/* test/*) 
 endif()
+
+install(TARGETS ${matrixName} LIBRARY DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
