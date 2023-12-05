@@ -8,7 +8,7 @@ message(STATUS "CMAKE_CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
 message(STATUS "PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}")
 message(STATUS "CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
 
-file(WRITE ${CMAKE_BINARY_DIR}/output.txt "")
+file(WRITE ${PROJECT_BINARY_DIR}/output.txt "")
 
 get_cmake_property(_variableNames VARIABLES)
 list (SORT _variableNames)
