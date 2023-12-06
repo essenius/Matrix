@@ -2,13 +2,11 @@ include(tools)
 
 assertVariableSet(matrixName)
 
-message(STATUS "In Matrix ${matrixName} src: CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME}")
+file(APPEND "In Matrix ${matrixName} src: CMAKE_PROJECT_NAME=${CMAKE_PROJECT_NAME}")
 
-message(STATUS "CMAKE_CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
-message(STATUS "PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}")
-message(STATUS "CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
-
-file(WRITE ${PROJECT_BINARY_DIR}/output.txt "")
+file(APPEND "CMAKE_CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
+file(APPEND "PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}")
+file(APPEND "CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
 
 get_cmake_property(_variableNames VARIABLES)
 list (SORT _variableNames)
@@ -27,6 +25,6 @@ set(mySources Array.cpp Matrix.cpp SolverMatrix.cpp)
 target_sources (${matrixName} PUBLIC ${myHeaders} PRIVATE ${mySources})
 target_include_directories(${matrixName} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-message(STATUS "Installing to ${CMAKE_CURRENT_BINARY_DIR}")
+file(APPEND ${PROJECT_BINARY_DIR}/output.txt "Installing to ${CMAKE_CURRENT_BINARY_DIR}")
 install(TARGETS ${matrixName} DESTINATION lib) # ${CMAKE_CURRENT_BINARY_DIR})
 install(FILES ${myHeaders} DESTINATION include) 
