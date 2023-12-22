@@ -17,8 +17,8 @@
 
 class ArrayTest : public testing::Test {
 protected:
-    bool contains(const Array &matrix, double value, double epsilon = Array::Epsilon) const;
-    bool isEqual(const Array &expected, const Array &actual, double epsilon = Array::Epsilon) const;
-    void expectEqual(const Array &expected, const Array &actual, const std::string &message = "", double epsilon = Array::Epsilon) const;
+	static bool contains(const Array &matrix, double value, double epsilon = Array::Epsilon);
+    static bool isEqual(const Array &expected, const Array &actual, double epsilon = Array::Epsilon);
+    static void expectEqual(const Array &expected, const Array &actual, const std::string &message = "", double epsilon = Array::Epsilon);
 };
 #endif

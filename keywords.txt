@@ -8,6 +8,8 @@ pow2	KEYWORD2
 rowCount	KEYWORD2
 setColumn	KEYWORD2
 setColumnCount	KEYWORD2
+setRow	KEYWORD2
+setRowCount	KEYWORD2
 sizeIsEqual	KEYWORD2
 swapColumns	KEYWORD2
 swapRows	KEYWORD2

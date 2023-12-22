@@ -13,7 +13,7 @@
 #include <gtest/gtest.h>
 #include "ArrayTest.h"
 
-bool ArrayTest::isEqual(const Array& expected, const Array& actual, const double epsilon) const {
+bool ArrayTest::isEqual(const Array& expected, const Array& actual, const double epsilon) {
     if (expected.rowCount() != actual.rowCount()) return false;
     if (expected.columnCount() != actual.columnCount()) return false;
 
@@ -27,7 +27,7 @@ bool ArrayTest::isEqual(const Array& expected, const Array& actual, const double
 }
 
 // repeat of above, but now asserting equality and showing details
-void ArrayTest::expectEqual(const Array& expected, const Array& actual, const std::string& message, const double epsilon) const {
+void ArrayTest::expectEqual(const Array& expected, const Array& actual, const std::string& message, const double epsilon) {
     EXPECT_EQ(expected.rowCount(), actual.rowCount()) << message << " rows";
     EXPECT_EQ(expected.columnCount(), actual.columnCount()) << message << " columns";
     for (Dimension row = 0; row < expected.rowCount(); row++) {
@@ -37,7 +37,7 @@ void ArrayTest::expectEqual(const Array& expected, const Array& actual, const st
     }
 }
 
-bool ArrayTest::contains(const Array& matrix, const double value, const double epsilon) const {
+bool ArrayTest::contains(const Array& matrix, const double value, const double epsilon) {
     for (Dimension row = 0; row < matrix.rowCount(); row++) {
         for (Dimension column = 0; column < matrix.columnCount(); column++) {
             if (fabs(matrix(row, column) - value) <= epsilon) return true;
@@ -156,6 +156,23 @@ TEST_F(ArrayTest, setColumnCount) {
     expectEqual(m, n, "setColumnCount smaller");
 }
 
+TEST_F(ArrayTest, setRow) {
+	Array m({ {1, 2}, {3, 4} });
+
+	m.setRow(1, Array({ { 5, 7 }}));
+	const Array expected({ {1, 2}, {5, 7} });
+	expectEqual(expected, m);
+}
+
+TEST_F(ArrayTest, setRowCount) {
+	const Array m({ {1, 2}, {3, 4} });
+	auto n = m;
+	n.setRowCount(4);
+	const Array expected ( { {1, 2}, {3, 4}, {0, 0}, {0, 0} });
+	expectEqual(expected, n, "setRowCount larger");
+	n.setRowCount(2);
+	expectEqual(m, n, "setRowCount smaller");
+}
 TEST_F(ArrayTest, DifferentSizesNotEqual) {
 	const Array m({ {1, 2}, {3, 4} });
 	const Array n({{1}});
@@ -169,13 +186,20 @@ TEST_F(ArrayTest, SetColumnScalar) {
     expectEqual(expected, m);
 }
 
+TEST_F(ArrayTest, SetRowScalar) {
+   	Array m({ {1, 2}, {3, 4} });
+	m.setRow(1, 5);
+	const Array expected({ {1, 2}, {5, 5} });
+	expectEqual(expected, m);
+}
+
 TEST_F(ArrayTest, GetEpsilon) {
 	const Array m({{Array::Epsilon / 2}});
 	const Array n({{Array::Epsilon / 3}});
     expectEqual(m, n);
 }
 
-TEST_F(ArrayTest, SwapRowsTest) {
+TEST_F(ArrayTest, SwapRows) {
     Array m({ {1, 2}, {3, 4}, {5, 6} });
     EXPECT_FALSE(m.isSquare()) << "Not square";
     m.swapRows(0, 2);
@@ -185,7 +209,7 @@ TEST_F(ArrayTest, SwapRowsTest) {
     expectEqual(expected, m);
 }
 
-TEST_F(ArrayTest, SwapColumnsTest) {
+TEST_F(ArrayTest, SwapColumns) {
     Array m({ {1, 2}, {3, 4}, {5, 6} });
     m.swapColumns(0, 1);
     const Array expected({ {2, 1}, {4, 3}, {6, 5} });
@@ -194,22 +218,56 @@ TEST_F(ArrayTest, SwapColumnsTest) {
     expectEqual(expected, m);
 }
 
-TEST_F(ArrayTest, AssertTest) {
+TEST_F(ArrayTest, AssertColumns) {
 	Array m({ {1, 2} });
 	EXPECT_DEATH(m.swapColumns(0, 2), "Assertion failed: .*column1 < _columns && column2 < _columns");
 	EXPECT_DEATH(m.swapColumns(2, 0), "Assertion failed: .*column1 < _columns && column2 < _columns");
-	EXPECT_DEATH(m.swapRows(0, 2), "Assertion failed: .*row1 < _rows && row2 < _rows");
-	EXPECT_DEATH(m.swapRows(2, 0), "Assertion failed: .*row1 < _rows && row2 < _rows");
 	EXPECT_DEATH(m.getColumn(2), "Assertion failed: .*column < _columns");
-	EXPECT_DEATH(m.getRow(2), "Assertion failed: .*row < _rows");
-    EXPECT_DEATH(m[2], "Assertion failed: .*cell < _arraySize");
+
+	// testing the non-const operator()
     EXPECT_DEATH(m(0, 2), "Assertion failed: .*row < _rows && column < _columns");
-    EXPECT_DEATH(m(2, 0), "Assertion failed: .*row < _rows && column < _columns");
-    EXPECT_DEATH(m.me(2, 0), "Assertion failed: .*row < _rows && column < _columns");
+    
     EXPECT_DEATH(m.me(0, 2), "Assertion failed: .*row < _rows && column < _columns");
+
+	const Array n({ {1, 2}, {3, 4} });
+
+    // testing the const operator() and operator[]
+    EXPECT_DEATH(n(0, 3), "Assertion failed: .*row < _rows && column < _columns");
+
+    EXPECT_DEATH(m.setColumn(2, n), "Assertion failed: .*column < _columns");
+    EXPECT_DEATH(m.setColumn(1, n), "Assertion failed: .*input.rowCount\\(\\) == _rows");
+    EXPECT_DEATH(m.setColumn(2, 1), "Assertion failed: .*column < _columns");
+}
+
+TEST_F(ArrayTest, AssertRows) {
+    Array m({ {1, 2} });
+    EXPECT_DEATH(m.swapRows(0, 2), "Assertion failed: .*row1 < _rows && row2 < _rows");
+    EXPECT_DEATH(m.swapRows(2, 0), "Assertion failed: .*row1 < _rows && row2 < _rows");
+    EXPECT_DEATH(m.getRow(2), "Assertion failed: .*row < _rows");
+    // testing the non-const operator()
+    EXPECT_DEATH(m(2, 0), "Assertion failed: .*row < _rows && column < _columns");
+    
+    EXPECT_DEATH(m.me(2, 0), "Assertion failed: .*row < _rows && column < _columns");
     const Array n({ {1, 2}, {3, 4} });
+
+    // testing the const operator() and operator[]
+    EXPECT_DEATH(n(3, 0), "Assertion failed: .*row < _rows && column < _columns");
+
+    const Array o({ {1} });
+    EXPECT_DEATH(m.setRow(2, n), "Assertion failed: .*row < _rows");
+    EXPECT_DEATH(m.setRow(1, o), "Assertion failed: .*input.columnCount\\(\\) == _columns");
+    EXPECT_DEATH(m.setRow(2, 1), "Assertion failed: .*row < _rows");
+}
+
+TEST_F(ArrayTest, AssertOther) {
+    Array m({ {1, 2} });
+    EXPECT_DEATH(m[2], "Assertion failed: .*cell < _arraySize");
+
+    const Array n({ {1, 2}, {3, 4} });
+
     EXPECT_DEATH(m += n, "Assertion failed: .*other.sizeIsEqual\\(\\*this\\)");
     EXPECT_DEATH(m -= n, "Assertion failed: .*other.sizeIsEqual\\(\\*this\\)");
     EXPECT_DEATH(m *= n, "Assertion failed: .*other.sizeIsEqual\\(\\*this\\)");
 
+    EXPECT_DEATH(n[4], "Assertion failed: .*cell < _arraySize");
 }

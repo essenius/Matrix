@@ -56,6 +56,10 @@ public:
     void setColumn(Dimension column, double value);
     void setColumnCount(Dimension columns);
 
+    void setRow(Dimension row, const Array &input);
+    void setRow(Dimension row, double value);
+    void setRowCount(Dimension rows);
+
     void swapRows(Dimension row1, Dimension row2);
     void swapColumns(Dimension column1, Dimension column2);
 
