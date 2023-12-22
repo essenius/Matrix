@@ -16,9 +16,13 @@
 #include "../src/Matrix.h"
 #include "ArrayTest.h"
 
-class MatrixTest : public ArrayTest {
-protected:
-    void expectNormalizedEqual(const Matrix& expected, const Matrix& actual, const std::string& message = "", double epsilon = Array::Epsilon) const;
-};
+namespace RixMatrixTest {
+    using RixMatrix::Matrix;
+
+    class MatrixTest : public ArrayTest {
+    protected:
+	    static void expectNormalizedEqual(const Matrix& expected, const Matrix& actual, const std::string& message = "", double epsilon = Array::Epsilon);
+    };
+}
 
 #endif
