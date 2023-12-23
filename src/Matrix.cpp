@@ -52,7 +52,7 @@ namespace RixMatrix {
     }
 
     Matrix Matrix::getAdjugate() const {
-        return getAdjoint().transposed();
+        return Matrix(getAdjoint().transposed());
     }
 
     double Matrix::getCofactor(const Dimension row, const Dimension column) const {

@@ -12,8 +12,7 @@ namespace  RixMatrix {
         /// Constructors
         Matrix(Dimension rows, Dimension columns);
         explicit Matrix(std::initializer_list<std::initializer_list<double>> list);
-        // not using explicit converter to allow implicit conversion from Array so all Array operations can be used on Matrix
-        Matrix(const Array& other);
+        explicit Matrix(const Array& other);
 
         // *= works differently in matrices
         void operator*=(const Matrix& other);
