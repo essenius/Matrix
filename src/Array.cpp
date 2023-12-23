@@ -259,6 +259,16 @@ namespace RixMatrix {
 		}
 	}
 
+	Array Array::transposed() const {
+		Array result(columnCount(), rowCount());
+		for (Dimension row = 0; row < rowCount(); row++) {
+			for (Dimension column = 0; column < columnCount(); column++) {
+				result(column, row) = me(row, column);
+			}
+		}
+		return result;
+	}
+
 	Array operator+(Array left, const Array& right) {
 		left += right;
 		return left;

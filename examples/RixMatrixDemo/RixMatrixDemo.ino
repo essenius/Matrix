@@ -1,5 +1,7 @@
 #include <SolverMatrix.h>
 
+using namespace RixMatrix;
+
 void printArray(const char* caption, const Array& array) {
     Serial.printf("%s:\n", caption);
     for (int row = 0; row < array.rowCount(); row++) {
@@ -13,7 +15,7 @@ void printArray(const char* caption, const Array& array) {
 void setup() {
   Serial.begin(115200);
   delay(100);
-  Serial.println("Array operations (cell by cell)");
+  Serial.println("** Array operations **");
   Array a({ {1, 2}, {3, 4} } );
   printArray("Array a Squared", a.pow2());
   // 1.000 4.000
@@ -38,21 +40,23 @@ void setup() {
   printArray("Matrix c", c);
   // 2.000
   // 0.000 
-  b.setColumn(1, {{7}, {11}});
+  b.setColumn(1, Array{{7}, {11}});
   printArray("New Array b", b);
   // 0.000 7.000
-  // 2.000 11.000  
+  // 3.000 11.000  
   b.setRow(1, c.transposed());
   printArray("New Array b", b);
   // 0.000 7.000
-  // 2.000 0.000  
-  
+  // 2.000 0.000
+  Serial.printf("\n** Matrix operations **\n");
   Matrix m({ {1, 2}, {3, 4} });
   printArray("Matrix m Squared Transposed", m.squared().transposed());  
   // Should return:
   // Squared Transposed:
   // 7.000 15.000 
   // 10.000 22.000 
+
+  Serial.printf("\n** SolverMatrix operations **\n");
 
   const SolverMatrix solver({ {-2, -4, 2}, {-2, 1, 2}, {4, 2, 5} });
   printArray("Eigenvalues",solver.getEigenvalues());

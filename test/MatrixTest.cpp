@@ -121,14 +121,6 @@ namespace RixMatrixTest {
         expectEqual(expected2, m2.normalized(), "normalize first negative");
     }
 
-    TEST_F(MatrixTest, transpose) {
-        const Matrix m({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
-        const Matrix expected({ {1, 4, 7}, {2, 5, 8}, {3, 6, 9} });
-        const Matrix actual = m.transposed();
-        expectEqual(expected, actual, "Transpose");
-        expectEqual(m, actual.transposed(), "Transposed transpose");
-    }
-
     TEST_F(MatrixTest, toArray) {
         const std::initializer_list<std::initializer_list<double>> input = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
         const Matrix m(input);

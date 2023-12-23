@@ -64,6 +64,9 @@ namespace RixMatrix {
         void swapRows(Dimension row1, Dimension row2);
         void swapColumns(Dimension column1, Dimension column2);
 
+        Array transposed() const;
+
+
         Dimension size() const;
         bool sizeIsEqual(const Array& other) const;
 

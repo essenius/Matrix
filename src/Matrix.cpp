@@ -145,16 +145,6 @@ namespace RixMatrix {
         return result;
     }
 
-    Matrix Matrix::transposed() const {
-        Matrix result(columnCount(), rowCount());
-        for (Dimension row = 0; row < rowCount(); row++) {
-            for (Dimension column = 0; column < columnCount(); column++) {
-                result(column, row) = me(row, column);
-            }
-        }
-        return result;
-    }
-
     Matrix operator+(Matrix left, const Matrix& right) {
         left += right;
         return left;

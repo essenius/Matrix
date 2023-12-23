@@ -221,6 +221,14 @@ namespace RixMatrixTest {
         expectEqual(expected, m);
     }
 
+    TEST_F(ArrayTest, transpose) {
+        const Array m({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
+        const Array expected({ {1, 4, 7}, {2, 5, 8}, {3, 6, 9} });
+        const Array actual = m.transposed();
+        expectEqual(expected, actual, "Transpose");
+        expectEqual(m, actual.transposed(), "Transposed transpose");
+    }
+
     TEST_F(ArrayTest, AssertColumns) {
         Array m({ {1, 2} });
         EXPECT_DEATH(m.swapColumns(0, 2), "Assertion failed: .*column1 < _columns && column2 < _columns");
