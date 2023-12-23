@@ -37,24 +37,6 @@ namespace RixMatrix {
 		}
 	}
 
-	Array::Array(Array&& other) noexcept {
-		_data = std::move(other._data);
-		_rows = other._rows;
-		_columns = other._columns;
-		_arraySize = other._arraySize;
-		other._rows = 0;
-		other._columns = 0;
-		other._arraySize = 0;
-		other._data.clear();
-	}
-
-	Array::Array(const Array& other) {
-		_data = other._data;
-		_rows = other._rows;
-		_columns = other._columns;
-		_arraySize = other._arraySize;
-	}
-
 	double& Array::operator[](const Dimension cell) {
 		assert(cell < _arraySize);
 		return _data[cell];

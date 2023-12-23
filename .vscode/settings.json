@@ -83,5 +83,6 @@
     },
     "sonarlint.analyzerProperties": {
         
-    }
+    },
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json"
 }

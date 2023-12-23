@@ -23,10 +23,6 @@ namespace RixMatrix {
         Array(Dimension rows, Dimension columns);
         explicit Array(std::initializer_list<std::initializer_list<double>> list);
 
-        Array(Array&& other) noexcept;
-        Array(const Array& other);
-        Array& operator=(const Array& other) = default;
-
         double& operator[](Dimension cell);
         const double& operator[](Dimension cell) const;
 
@@ -65,7 +61,6 @@ namespace RixMatrix {
         void swapColumns(Dimension column1, Dimension column2);
 
         Array transposed() const;
-
 
         Dimension size() const;
         bool sizeIsEqual(const Array& other) const;

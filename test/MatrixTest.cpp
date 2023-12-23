@@ -122,9 +122,9 @@ namespace RixMatrixTest {
     }
 
     TEST_F(MatrixTest, toArray) {
-	    constexpr std::initializer_list<std::initializer_list<double>> Input = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
-        const Matrix m(Input);
-        const Array expected(Input);
+	    const std::initializer_list<std::initializer_list<double>> input = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
+        const Matrix m(input);
+        const Array expected(input);
         const auto actual = m.toArray();
         expectEqual(expected, actual, "toArray");
     }
