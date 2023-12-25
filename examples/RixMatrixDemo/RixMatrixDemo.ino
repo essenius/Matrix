@@ -36,8 +36,8 @@ void setup() {
   printArray("Array a * Array b", a * b);
   // 0.000 4.000
   // 9.000 0.000 
-  Matrix c(b.getColumn(1));
-  printArray("Matrix c", c);
+  Array c(b.getColumn(1));
+  printArray("Array c", c);
   // 2.000
   // 0.000 
   b.setColumn(1, Array{{7}, {11}});
@@ -48,7 +48,9 @@ void setup() {
   printArray("New Array b", b);
   // 0.000 7.000
   // 2.000 0.000
+
   Serial.printf("\n** Matrix operations **\n");
+  
   Matrix m({ {1, 2}, {3, 4} });
   printArray("Matrix m Squared Transposed", m.squared().transposed());  
   // Should return:

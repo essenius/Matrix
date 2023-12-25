@@ -122,6 +122,8 @@ namespace RixMatrixTest {
     }
 
     TEST_F(MatrixTest, toArray) {
+
+	    // ReSharper disable once CppVariableCanBeMadeConstexpr -- doesn't work on C++ 11
 	    const std::initializer_list<std::initializer_list<double>> input = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
         const Matrix m(input);
         const Array expected(input);
