@@ -18,7 +18,7 @@ Class for array manipulations (coefficient wise):
 - `pow2`: multiply elements by themselves
 - `swapRows`, `swapColumns`: swap two rows or columns
 - `setRow`, `setColumn`: set all elements of a row or column to a value, or set the row/column to a 1 dimensional array.
-- `transposed`: swap rows and columns
+- `transposed`: return a new array where rows are columns
 
 ## Matrix
 
@@ -37,6 +37,7 @@ Class for basic matrix operations
 - `normalized`: each element divided by the square root of the sum of the squared elements
 - `squared`: matrix multiplied by itself
 - `toArray`: convert matrix to array
+- `transposed<Matrix>`: as transposed, but return a Matrix object instead of an Array object
 
 ## SolverMatrix
 

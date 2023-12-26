@@ -18,7 +18,7 @@ namespace RixMatrix {
     using Dimension = unsigned int;
 
     /// Class for array manipulations (coefficient wise)
-    class Array {
+	class Array {
     public:
         Array(Dimension rows, Dimension columns);
         explicit Array(std::initializer_list<std::initializer_list<double>> list);
@@ -60,7 +60,16 @@ namespace RixMatrix {
         void swapRows(Dimension row1, Dimension row2);
         void swapColumns(Dimension column1, Dimension column2);
 
-        Array transposed() const;
+        template<class T = Array>
+        T transposed() const {
+            T result(columnCount(), rowCount());
+            for (Dimension row = 0; row < rowCount(); row++) {
+                for (Dimension column = 0; column < columnCount(); column++) {
+                    result(column, row) = me(row, column);
+                }
+            }
+            return result;
+        }
 
         Dimension size() const;
         bool sizeIsEqual(const Array& other) const;
