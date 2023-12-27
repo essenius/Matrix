@@ -20,9 +20,6 @@ FetchContent_MakeAvailable_With_Check(googletest)
 
 add_executable(${matrixTestName} "")
 
-#file(GLOB_RECURSE myHeaders LIST_DIRECTORIES true *.h)
-#file(GLOB_RECURSE mySources LIST_DIRECTORIES true *.cpp)
-
 set(myHeaders ArrayTest.h MatrixTest.h)
 set(mySources ArrayTest.cpp MatrixTest.cpp SolverMatrixTest.cpp)
 target_sources (${matrixTestName} PRIVATE ${myHeaders} PRIVATE ${mySources})
