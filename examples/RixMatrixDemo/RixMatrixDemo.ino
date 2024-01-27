@@ -27,12 +27,13 @@ void printArray(const char* caption, const Array& array) {
 void setup() {
   Serial.begin(115200);
   delay(500);
-  Serial.printf("** Array operations **\n\n");
+  printf("** Array operations **\n\n");
+  
   Array a({ {1, 2}, {3, 4} } );
   printArray("Array a", a);
   // 1.000 2.000 
   // 3.000 4.000 
-  printArray("a squared", a.pow2());
+    printArray("a squared", a.pow2());
   // 1.000 4.000
   // 9.000 16.000
   printArray("a * 3", a * 3);
@@ -41,6 +42,7 @@ void setup() {
   printArray("a / 2", a / 2);
   // 0.500 1.000
   // 1.500 2.000
+  
   Array b{{0, 2}, {3, 0}};
   printArray("Array b", b);
   // 0.000 2.000 
@@ -54,6 +56,7 @@ void setup() {
   printArray("a * b", a * b);
   // 0.000 4.000
   // 9.000 0.000 
+  
   Array c(b.getColumn(1));
   printArray("Array c (= second column of b)", c);
   // 2.000
@@ -67,13 +70,13 @@ void setup() {
   // 0.000 7.000
   // 2.000 0.000
   
-  Serial.printf("\n** Matrix operations **\n\n");
+  printf("\n** Matrix operations **\n\n");
   
   Matrix m(a);
   printArray("Matrix m (= a)", m);
   // 1.000 2.000
   // 3.000 4.000
-  Serial.printf("Determinant of m:\n  %.3f\n", m.getDeterminant());
+  printf("Determinant of m:\n  %.3f\n", m.getDeterminant());
   // -2.000
   printArray("m squared", m.squared());  
   // 7.000 10.000 
@@ -89,14 +92,15 @@ void setup() {
   // -3.000 1.000
 
   const Matrix n({ {1, 2, 3}, {3, -1, 0} });
+  printArray("Matrix n", n);  // 1.000 2.000 
   // 1.000 2.000 3.000 
   // 3.000 -1.000 0.000 
+
   const Matrix o({ {1, 2}, {3, 4}, {5, 6} });
-  // 1.000 2.000 
+  printArray("Matrix o", o);
   // 3.000 4.000 
   // 5.000 6.000 
-  printArray("Matrix n", n);
-  printArray("Matrix o", o);
+
   printArray("n * o", n * o);
   // 22.000 28.000
   // 0.000 2.000
@@ -129,4 +133,5 @@ void setup() {
 }
 
 void loop() {
+  // wait forever
 }
