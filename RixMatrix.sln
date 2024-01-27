@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		post-build.cmd = post-build.cmd
 		README.md = README.md
+		RixMatrix.sln.DotSettings = RixMatrix.sln.DotSettings
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{29C4C9CD-8628-4717-AF20-DF7DFB2DD319}"

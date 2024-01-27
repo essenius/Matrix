@@ -1,4 +1,4 @@
-// Copyright 2023 Rik Essenius
+// Copyright 2023-2024 Rik Essenius
 // 
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 // except in compliance with the License. You may obtain a copy of the License at
@@ -163,6 +163,11 @@ namespace RixMatrixTest {
         expectEqual(a, m);
     }
 
+    TEST_F(MatrixTest, transposeToMatrix) {
+        const Matrix m({ { 1, 2}, {3, 4} });
+        const Matrix mtm = m.transposed<Matrix>() * m;
+        expectEqual(Matrix({ { 10, 14 }, { 14, 20 } }), mtm);
+    }
     TEST_F(MatrixTest, assertTest) {
         const Matrix m({ {1, 2} });
         EXPECT_DEATH(m.getCofactor(2, 2), "Assertion failed");
