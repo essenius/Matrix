@@ -105,7 +105,7 @@ void setup() {
   // 15.000 2.000 9.000
   // 23.000 4.000 15.000
 
-  const Matrix mtm = m.transposed<Matrix>()) * m;
+  const Matrix mtm = m.transposed<Matrix>() * m;
   printArray("mT * m", mtm);
   // 10.000 14.000 
   // 14.000 20.000   
