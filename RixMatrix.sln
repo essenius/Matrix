@@ -18,13 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		RixMatrix.sln.DotSettings = RixMatrix.sln.DotSettings
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{29C4C9CD-8628-4717-AF20-DF7DFB2DD319}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RixMatrixDemo", "RixMatrixDemo", "{62B54542-A68D-4277-AE06-E45308F061DE}"
-	ProjectSection(SolutionItems) = preProject
-		examples\RixMatrixDemo\RixMatrixDemo.ino = examples\RixMatrixDemo\RixMatrixDemo.ino
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{5AB84485-19A0-49C9-8E3B-7632470CD44D}"
 	ProjectSection(SolutionItems) = preProject
 		lib\CMakeLists.txt = lib\CMakeLists.txt
@@ -60,10 +53,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{29C4C9CD-8628-4717-AF20-DF7DFB2DD319} = {B2E0DA7B-323F-4626-BFB0-0513D484A3F3}
-		{62B54542-A68D-4277-AE06-E45308F061DE} = {29C4C9CD-8628-4717-AF20-DF7DFB2DD319}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F8E7176A-F5F2-4C44-89EF-DED7B934FF95}

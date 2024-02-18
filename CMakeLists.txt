@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.14)
 set(matrixName Matrix)
 set(matrixTestName ${matrixName}Test)
 
-project(${matrixName} VERSION 0.0.4 LANGUAGES CXX)
+project(${matrixName} VERSION 0.2.3 LANGUAGES CXX)
 
 # We only want to enable testing and code coverage for the top level project
 # On Windows, these are also only used when building a vcpkg package.
