@@ -1,4 +1,4 @@
-// Copyright 2023 Rik Essenius
+// Copyright 2023-2024 Rik Essenius
 // 
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 // except in compliance with the License. You may obtain a copy of the License at
@@ -157,6 +157,8 @@ namespace RixMatrixTest {
         expectEqual(expected, n, "setColumnCount larger");
         n.setColumnCount(2);
         expectEqual(m, n, "setColumnCount smaller");
+        n.setColumnCount(2);
+        expectEqual(m, n, "nothing changed for setColumnCount");
     }
 
     TEST_F(ArrayTest, setRow) {
@@ -229,6 +231,7 @@ namespace RixMatrixTest {
         expectEqual(m, actual.transposed(), "Transposed transpose");
     }
 
+#ifdef _DEBUG
     TEST_F(ArrayTest, AssertColumns) {
         Array m({ {1, 2} });
         EXPECT_DEATH(m.swapColumns(0, 2), "Assertion failed: .*column1 < _columns && column2 < _columns");
@@ -282,4 +285,5 @@ namespace RixMatrixTest {
 
         EXPECT_DEATH(n[4], "Assertion failed: .*cell < _arraySize");
     }
+#endif
 }

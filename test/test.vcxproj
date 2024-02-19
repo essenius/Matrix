@@ -35,7 +35,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
-    <LibraryPath>src\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>src\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>..\src\x64\Release;$(LibraryPath)</LibraryPath>

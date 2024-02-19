@@ -168,6 +168,8 @@ namespace RixMatrixTest {
         const Matrix mtm = m.transposed<Matrix>() * m;
         expectEqual(Matrix({ { 10, 14 }, { 14, 20 } }), mtm);
     }
+
+#ifdef _DEBUG
     TEST_F(MatrixTest, assertTest) {
         const Matrix m({ {1, 2} });
         EXPECT_DEATH(m.getCofactor(2, 2), "Assertion failed");
@@ -178,4 +180,5 @@ namespace RixMatrixTest {
         EXPECT_DEATH(m.inverted(), "Assertion failed");
         EXPECT_FALSE(m.isInvertible());
     }
+#endif
 }

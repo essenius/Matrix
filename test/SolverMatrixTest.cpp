@@ -1,4 +1,4 @@
-// Copyright 2023 Rik Essenius
+// Copyright 2023-2024 Rik Essenius
 // 
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 // except in compliance with the License. You may obtain a copy of the License at
@@ -11,7 +11,7 @@
 
 #include <gtest/gtest.h>
 #include "MatrixTest.h"
-#include "../src/SolverMatrix.h"
+#include <SolverMatrix.h>
 
 namespace RixMatrixTest {
     using RixMatrix::SolverMatrix;
@@ -255,10 +255,12 @@ namespace RixMatrixTest {
         expectEqual(m, sm);
     }
 
+#ifdef DEBUG
     TEST_F(SolverMatrixTest, assertTest) {
         SolverMatrix m({ {1, 2} });
         ASSERT_DEATH(m *= SolverMatrix({ {1} }), "Assertion.*failed");
         ASSERT_DEATH(m.getEigenvalues(), "Assertion.*failed");
         ASSERT_DEATH(m.getEigenvectorFor(1), "Assertion.*failed");
     }
+#endif
 }
