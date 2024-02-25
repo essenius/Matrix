@@ -7,7 +7,7 @@ project(${matrixName} VERSION 0.2.3 LANGUAGES CXX)
 
 # We only want to enable testing and code coverage for the top level project
 # On Windows, these are also only used when building a vcpkg package.
-if ((CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR) AND NOT (WIN32))
+if ((CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR) AND NOT DEFINED VCPKG_TARGET_TRIPLET)
   set(TOP_LEVEL ON)
 else()
   set(TOP_LEVEL OFF)
