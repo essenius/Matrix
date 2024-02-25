@@ -10,7 +10,7 @@ endfunction()
 
 function(assertVariableSet)
     foreach(argument ${ARGN})
-        if(NOT ${argument})
+        if(NOT DEFINED ${argument})
             message(FATAL_ERROR "Variable '${argument}' was not set")
         endif()
     endforeach()
