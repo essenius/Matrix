@@ -70,15 +70,12 @@ namespace RixMatrixTest {
 
     TEST_F(MatrixTest, cofactor3d) {
         const Matrix n({ {1, 2, 1}, {6, -1, 0}, {-1, -2, -1} });
-        EXPECT_EQ(1, n.getCofactor(0, 0));
-        EXPECT_EQ(6, n.getCofactor(0, 1));
-        EXPECT_EQ(-13, n.getCofactor(0, 2));
-        EXPECT_EQ(0, n.getCofactor(1, 0));
-        EXPECT_EQ(0, n.getCofactor(1, 1));
-        EXPECT_EQ(0, n.getCofactor(1, 2));
-        EXPECT_EQ(1, n.getCofactor(2, 0));
-        EXPECT_EQ(6, n.getCofactor(2, 1));
-        EXPECT_EQ(-13, n.getCofactor(2, 2));
+        const Matrix expected{ { 1, 6, -13}, {0, 0, 0}, {1, 6, -13} };
+        for (int row = 0; row < 3; row++) {
+			for (int column = 0; column < 3; column++) {
+				EXPECT_EQ(expected(row, column), n.getCofactor(row, column));
+			}
+		}
     }
 
     TEST_F(MatrixTest, adjugate2d) {
@@ -146,15 +143,12 @@ namespace RixMatrixTest {
 
     TEST_F(MatrixTest, cofactor3dbis) {
         const Matrix m({ {3, 5, 0}, {2, -1, -7}, {6, -1, 5} });
-        EXPECT_EQ(-12, m.getCofactor(0, 0));
-        EXPECT_EQ(-52, m.getCofactor(0, 1));
-        EXPECT_EQ(4, m.getCofactor(0, 2));
-        EXPECT_EQ(-25, m.getCofactor(1, 0));
-        EXPECT_EQ(15, m.getCofactor(1, 1));
-        EXPECT_EQ(33, m.getCofactor(1, 2));
-        EXPECT_EQ(-35, m.getCofactor(2, 0));
-        EXPECT_EQ(21, m.getCofactor(2, 1));
-        EXPECT_EQ(-13, m.getCofactor(2, 2));
+        const Matrix result({ {-12, -52, 4}, {-25, 15, 33}, {-35, 21, -13} });
+        for (int row = 0; row < 3; row++) {
+            for (int column = 0; column < 3; column++) {
+                EXPECT_EQ(result(row, column), m.getCofactor(row, column));
+            }
+        }
     }
 
     TEST_F(MatrixTest, assignArray) {
