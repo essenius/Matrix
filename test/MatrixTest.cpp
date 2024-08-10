@@ -62,10 +62,12 @@ namespace RixMatrixTest {
 
     TEST_F(MatrixTest, cofactor2d) {
         const Matrix m({ {1, 2}, {3, 4} });
-        EXPECT_EQ(4, m.getCofactor(0, 0));
-        EXPECT_EQ(-3, m.getCofactor(0, 1));
-        EXPECT_EQ(-2, m.getCofactor(1, 0));
-        EXPECT_EQ(1, m.getCofactor(1, 1));
+        const Matrix expected({ {4, -3}, {-2, 1} });
+        for (int row = 0; row < 2; row++) {
+            for (int column = 0; column < 2; column++) {
+                EXPECT_EQ(expected(row, column), m.getCofactor(row, column));
+            }
+        }
     }
 
     TEST_F(MatrixTest, cofactor3d) {
@@ -163,6 +165,11 @@ namespace RixMatrixTest {
         expectEqual(Matrix({ { 10, 14 }, { 14, 20 } }), mtm);
     }
 
+    TEST_F(MatrixTest, isInvertible) {
+        const Matrix m({ {1, 2} });
+		EXPECT_FALSE(m.isInvertible());
+    }
+
 #ifdef _DEBUG
     TEST_F(MatrixTest, assertTest) {
         const Matrix m({ {1, 2} });
@@ -172,7 +179,6 @@ namespace RixMatrixTest {
         EXPECT_DEATH(m.getMinor(0, 0), "Assertion failed");
         EXPECT_DEATH(m.getTrace(), "Assertion failed");
         EXPECT_DEATH(m.inverted(), "Assertion failed");
-        EXPECT_FALSE(m.isInvertible());
     }
 #endif
 }
