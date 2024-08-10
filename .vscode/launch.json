@@ -4,13 +4,18 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
-            "name": "Debug",
-            "type": "lldb",
+            "name": "(lldb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
             "program": "${workspaceFolder}/build/test/MatrixTest",
             "args": [],
-            "request": "launch",
+            "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
         }
     ]
 }
