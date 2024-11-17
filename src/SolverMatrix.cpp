@@ -9,14 +9,20 @@
 // is distributed on an "AS IS" BASIS WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and limitations under the License.
 
-#include "SolverMatrix.h"
 #include <cassert>
+
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include <iostream>
-#ifdef _MSC_VER
-#include <corecrt_math_defines.h>
+
+// g++ should now have M_PI defined. 
+// The MS compiler defines M_PI in corecrt_math_defines.h, but esp-idf doesn't seem to define it at all.
+// So we define it ourselves - no use making the code more complex than it needs to be. 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
 #endif
+
+#include <iostream>
+#include "SolverMatrix.h"
 
 namespace RixMatrix {
 
