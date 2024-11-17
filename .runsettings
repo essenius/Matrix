@@ -19,6 +19,7 @@ Included items must then not match any entries in the exclude list to remain inc
 						<Functions>
 							<Exclude>
 								<Function>.*std::.*</Function>
+                <Function>.*GoogleTestAdapter.*</Function>
               </Exclude>
 						</Functions>
 
