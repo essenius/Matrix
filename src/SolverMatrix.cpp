@@ -11,9 +11,10 @@
 
 #include "SolverMatrix.h"
 #include <cassert>
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <iostream>
-#ifdef _WIN32
+#ifdef _MSC_VER
 #include <corecrt_math_defines.h>
 #endif
 
