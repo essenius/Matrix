@@ -3,15 +3,15 @@ cmake_minimum_required(VERSION 3.14)
 set(matrixName Matrix)
 set(matrixTestName ${matrixName}Test)
 
-project(${matrixName} VERSION 0.2.6 LANGUAGES CXX)
+project(${matrixName} VERSION 0.2.7 LANGUAGES CXX)
 
 # We only want to enable testing and code coverage for the top level project
 # On Windows, these are also only used when building a vcpkg package.
 if ((CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR) AND NOT DEFINED VCPKG_TARGET_TRIPLET)
   set(TOP_LEVEL ON)
-  if(WIN32)
-    set(CMAKE_GENERATOR "MinGW Makefiles")
-  endif()
+#  if(WIN32)
+#    set(CMAKE_GENERATOR "MinGW Makefiles")
+#  endif()
 else()
   set(TOP_LEVEL OFF)
 endif()
@@ -43,3 +43,6 @@ if(TOP_LEVEL)
   endif()
 endif()
 
+# On Windows, build as follows:
+# cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="../install" ..
+# cmake --build . --target install

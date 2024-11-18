@@ -16,14 +16,16 @@ endforeach()
 
 add_library(${matrixName} "")
 
-#file(GLOB_RECURSE myHeaders LIST_DIRECTORIES true *.h)
-#file(GLOB_RECURSE mySources LIST_DIRECTORIES true *.cpp)
-
 set(myHeaders Array.h Matrix.h SolverMatrix.h)
 set(mySources Array.cpp Matrix.cpp SolverMatrix.cpp)
 
 target_sources (${matrixName} PUBLIC ${myHeaders} PRIVATE ${mySources})
 target_include_directories(${matrixName} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+message(STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
+message(STATUS "CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
+message(STATUS "CMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}")
+message(STATUS "CMAKE_INSTALL_INCLUDEDIR=${CMAKE_INSTALL_INCLUDEDIR}")
 
 install(TARGETS ${matrixName} DESTINATION lib)
 install(FILES ${myHeaders} DESTINATION include) 

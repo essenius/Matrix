@@ -392,6 +392,8 @@ build/
 out/
 
 packages/
+install/
+dist/
 
 # debugging
 output.txt
