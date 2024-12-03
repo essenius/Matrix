@@ -40,6 +40,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>..\src\x64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>false</VcpkgEnableManifest>
+  </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="ArrayTest.h" />
     <ClInclude Include="MatrixTest.h" />
@@ -48,6 +51,7 @@
     <ClCompile Include="ArrayTest.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MatrixTest.cpp" />
+    <ClCompile Include="MemTest.cpp" />
     <ClCompile Include="RixMatrixDemo.cpp" />
     <ClCompile Include="SolverMatrixTest.cpp" />
   </ItemGroup>

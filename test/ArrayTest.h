@@ -13,7 +13,7 @@
 #define ARRAYTEST_H
 
 #include "gtest/gtest.h"
-#include "../src/Array.h"
+#include "Array.h"
 
 namespace RixMatrixTest {
     using RixMatrix::Array;

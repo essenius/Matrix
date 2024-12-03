@@ -13,7 +13,7 @@
 #define MATRIXTEST_H
 
 #include <gtest/gtest.h>
-#include "../src/Matrix.h"
+#include "Matrix.h"
 #include "ArrayTest.h"
 
 namespace RixMatrixTest {
